@@ -3,7 +3,7 @@ from tf_agents.environments import tf_py_environment
 from tf_agents.policies import py_tf_eager_policy
 from tf_agents.trajectories import time_step as ts
 import numpy as np
-from src.environment import BirdRobotEnvironment
+from environment import BirdRobotEnvironment
 from config import POLICY_DIR
 import os
 
