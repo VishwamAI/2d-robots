@@ -263,6 +263,9 @@ try:
             print("The 'action' method is not present in the saved model signatures.")
             # Additional debugging: Print the available methods in the saved model
             print(f"Available methods in saved model: {dir(saved_model)}")
+            # Additional debugging: Print the concrete function for 'action' method
+            concrete_function = saved_model.signatures.get("action")
+            print(f"Concrete function for 'action': {concrete_function}")
     except Exception as e:
         print(f"Error saving policy: {e}")
 except Exception as e:
@@ -277,3 +280,10 @@ else:
 
 # Additional Debugging
 print("Debugging - Signatures after saving:", saved_policy.signatures)
+
+# Debugging: Confirm 'action' method in policy signatures
+saved_policy = tf.compat.v2.saved_model.load(policy_dir)
+if 'action' in saved_policy.signatures:
+    print(f"'action' method is in policy signatures: {saved_policy.signatures['action']}")
+else:
+    print("'action' method is NOT in policy signatures")
