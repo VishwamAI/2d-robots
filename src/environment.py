@@ -73,7 +73,8 @@ class BirdRobotEnvironment(py_environment.PyEnvironment):
         # State array structure: [x, y, orientation, velocity, goal_x, goal_y, obstacle_x1, obstacle_y1, distance1, ...]
         self._state = np.zeros(
             6 + num_obstacles * 3, dtype=np.float32
-        )  # Initialize state array
+        )
+        # Initialize state array
         self._episode_ended = False
 
     def action_spec(self):
@@ -89,7 +90,8 @@ class BirdRobotEnvironment(py_environment.PyEnvironment):
         num_obstacles = len(self._obstacles)
         self._state = np.zeros(
             6 + num_obstacles * 3, dtype=np.float32
-        )  # Reset to initial position and goal
+        )
+        # Reset to initial position and goal
         self._state[:2] = [
             BOUNDARY_MIN + BOUNDARY_OFFSET,
             BOUNDARY_MIN + BOUNDARY_OFFSET
@@ -148,20 +150,24 @@ class BirdRobotEnvironment(py_environment.PyEnvironment):
             self._state[0] += (
                 self._state[3] * np.cos(np.deg2rad(self._state[2]))
                 * SIMULATION_TIME_STEP
-            )  # Move forward
+            )
+            # Move forward
             self._state[1] += (
                 self._state[3] * np.sin(np.deg2rad(self._state[2]))
                 * SIMULATION_TIME_STEP
-            )  # Move forward
+            )
+            # Move forward
         elif action == self.ACTION_MOVE_BACKWARD:
             self._state[0] -= (
                 self._state[3] * np.cos(np.deg2rad(self._state[2]))
                 * SIMULATION_TIME_STEP
-            )  # Move backward
+            )
+            # Move backward
             self._state[1] -= (
                 self._state[3] * np.sin(np.deg2rad(self._state[2]))
                 * SIMULATION_TIME_STEP
-            )  # Move backward
+            )
+            # Move backward
 
         # Ensure the orientation stays within 0 to 360 degrees
         self._state[2] = self._state[2] % 360
