@@ -49,8 +49,9 @@ except Exception as e:
     )
 
 # Register the 'action' method as a concrete function
-policy.action = tf.function(policy.action)
-print(f"Registered 'action' method as a concrete function: {policy.action}")
+if hasattr(policy, 'action'):
+    policy.action = tf.function(policy.action)
+    print(f"Registered 'action' method as a concrete function: {policy.action}")
 
 # Run a few episodes and print the results
 num_episodes = 10
