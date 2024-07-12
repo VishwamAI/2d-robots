@@ -1,3 +1,5 @@
+import sys
+sys.path.append('/home/ubuntu/2D-birds')
 from src.environment import BirdRobotEnvironment
 import os
 import tensorflow as tf
@@ -163,7 +165,8 @@ try:
             batched_observations,
         )
         print(
-            f"Observations shape: {observations.shape}\nBatched observations shape: {batched_observations.shape}"
+            f"Observations shape: {observations.shape}
+Batched observations shape: {batched_observations.shape}"
         )
         print(f"Shape of batched observations: {tf.shape(batched_observations)}")
         print(f"QNetwork input spec: {q_net.input_tensor_spec}")
