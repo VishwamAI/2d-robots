@@ -1,6 +1,7 @@
 import numpy as np
 from config import MAX_SPEED, ACCELERATION, TURN_RATE, SIMULATION_TIME_STEP
 
+
 class BirdRobotMovement:
     """
     Movement system for the 2D bird robot.
@@ -26,26 +27,38 @@ class BirdRobotMovement:
             np.ndarray: The new position of the bird robot [x, y].
         """
         if control_command.get('accelerate'):
-            self.velocity = np.clip(self.velocity + ACCELERATION, -MAX_SPEED, MAX_SPEED)
+            self.velocity = np.clip(
+                self.velocity + ACCELERATION, -MAX_SPEED, MAX_SPEED
+            )
         if control_command.get('decelerate'):
-            self.velocity = np.clip(self.velocity - ACCELERATION, -MAX_SPEED, MAX_SPEED)
+            self.velocity = np.clip(
+                self.velocity - ACCELERATION, -MAX_SPEED, MAX_SPEED
+            )
         if control_command.get('turn_right'):
             self.orientation = (self.orientation + TURN_RATE) % 360
         if control_command.get('turn_left'):
             self.orientation = (self.orientation - TURN_RATE) % 360
         if control_command.get('move_forward'):
             self.position[0] += (
-                self.velocity * np.cos(np.deg2rad(self.orientation)) * SIMULATION_TIME_STEP
+                self.velocity
+                * np.cos(np.deg2rad(self.orientation))
+                * SIMULATION_TIME_STEP
             )
             self.position[1] += (
-                self.velocity * np.sin(np.deg2rad(self.orientation)) * SIMULATION_TIME_STEP
+                self.velocity
+                * np.sin(np.deg2rad(self.orientation))
+                * SIMULATION_TIME_STEP
             )
         if control_command.get('move_backward'):
             self.position[0] -= (
-                self.velocity * np.cos(np.deg2rad(self.orientation)) * SIMULATION_TIME_STEP
+                self.velocity
+                * np.cos(np.deg2rad(self.orientation))
+                * SIMULATION_TIME_STEP
             )
             self.position[1] -= (
-                self.velocity * np.sin(np.deg2rad(self.orientation)) * SIMULATION_TIME_STEP
+                self.velocity
+                * np.sin(np.deg2rad(self.orientation))
+                * SIMULATION_TIME_STEP
             )
 
         return self.position
