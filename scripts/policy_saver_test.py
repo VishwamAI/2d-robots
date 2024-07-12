@@ -1,7 +1,10 @@
+import sys
+sys.path.append('..')  # Adds the project root to the Python path
+
 from tf_agents.policies import random_tf_policy
 from tf_agents.policies import PolicySaver
 import tensorflow as tf
-from ..src.environment import BirdRobotEnvironment
+from src.environment import BirdRobotEnvironment
 from tf_agents.environments import tf_py_environment
 
 # Initialize the environment
