@@ -23,6 +23,9 @@ if not os.path.exists(policy_dir):
         "Please ensure the model is trained and saved correctly."
     )
 
+# Print the contents of the policy directory for debugging
+print(f"Contents of policy directory '{policy_dir}': {os.listdir(policy_dir)}")
+
 try:
     policy = py_tf_eager_policy.SavedModelPyTFEagerPolicy(
         policy_dir,
@@ -34,6 +37,10 @@ try:
     else:
         print("The loaded policy does NOT have an 'action' method.")
         print(f"Available attributes of the policy object: {dir(policy)}")
+        # Print the details of the policy object for debugging
+        print(f"Policy object details: {policy}")
+        # Print the signatures of the loaded policy
+        print(f"Policy signatures: {policy.signatures}")
 except Exception as e:
     print(f"Exception details: {e}")
     raise RuntimeError(
