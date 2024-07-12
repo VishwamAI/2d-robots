@@ -52,6 +52,16 @@ This project uses GitHub Actions for Continuous Integration (CI). The CI workflo
 - Lint the code with flake8
 - Run tests with pytest
 
+## Project Structure
+
+The project is organized into the following directories:
+- `agents/`: Contains the reinforcement learning agents, including `train_agent.py` and `evaluate_agent.py`.
+- `behaviors/`: Contains the implementation of different behaviors and exercises for the walking model.
+- `environments/`: Contains the environment definitions for the 2D walking model.
+- `models/`: Contains the trained models and related files.
+- `tests/`: Contains the test files for validating the functionality of the project.
+- `utils/`: Contains utility scripts and helper functions.
+
 ## Contributing
 
 Contributions are welcome! Please fork the repository and create a pull request with your changes.
