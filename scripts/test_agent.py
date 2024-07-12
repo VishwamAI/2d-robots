@@ -38,6 +38,11 @@ try:
     print(f"Contents of policy directory '{policy_dir}': {os.listdir(policy_dir)}")
     print(f"Loaded policy object: {saved_policy}")
     print(f"Attributes of loaded policy object: {dir(saved_policy)}")
+    # Debugging: Confirm 'action' method in policy signatures
+    if "action" in saved_policy.signatures:
+        print(f"'action' method is in policy signatures: {saved_policy.signatures['action']}")
+    else:
+        print("'action' method is NOT in policy signatures")
 except Exception as e:
     raise RuntimeError(f"Error loading policy from '{policy_dir}': {e}")
 
