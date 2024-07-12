@@ -108,7 +108,7 @@ time_step_placeholder = tf.nest.map_structure(
     time_step_spec,
 )
 
-policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None)
+policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None, signatures={'action': agent.policy.action})
 
 # Ensure the 'action' method is a callable TensorFlow graph
 assert callable(
