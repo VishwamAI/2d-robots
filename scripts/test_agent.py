@@ -10,7 +10,7 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from environments.environment import BirdRobotEnvironment
-from config import POLICY_DIR
+from config.config import POLICY_DIR
 
 # Print the current working directory and Python path for debugging
 print("Current working directory:", os.getcwd())
