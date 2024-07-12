@@ -142,6 +142,10 @@ for _ in range(num_iterations):
 
 # Save the policy
 policy_dir = './policy'
+
+# Register the 'action' method as a concrete function
+agent.policy.action = common.function(agent.policy.action)
+
 tf_policy_saver = policy_saver.PolicySaver(
     agent.policy,
     batch_size=1,  # Specify a batch size of 1
