@@ -94,7 +94,7 @@ log_interval = LOG_INTERVAL
 eval_interval = EVAL_INTERVAL
 
 # Create a placeholder TimeStep object using the spec provided by time_step_spec
-time_step_spec = agent.policy.time_step_spec()
+time_step_spec = agent.policy.time_step_spec
 time_step_placeholder = tf.nest.map_structure(lambda spec: tf.TensorSpec(shape=spec.shape, dtype=spec.dtype), time_step_spec)
 
 # Initialize the PolicySaver with the correct input signature
