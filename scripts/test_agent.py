@@ -49,8 +49,13 @@ for _ in range(num_episodes):
     episode_return = 0.0
 
     while not time_step.is_last():
-        action_step = policy.action(time_step)
-        time_step = eval_env.step(action_step.action)
-        episode_return += time_step.reward
+        try:
+            action_step = policy.action(time_step)
+            time_step = eval_env.step(action_step.action)
+            episode_return += time_step.reward
+        except AttributeError as e:
+            print(f"AttributeError during policy execution: {e}")
+            print(f"Attributes of policy object: {dir(policy)}")
+            raise
 
     print('Episode return: {}'.format(episode_return))
