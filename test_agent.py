@@ -35,7 +35,7 @@ def load_policy(policy_dir, time_step_spec, action_spec):
 
 def evaluate_policy(policy, environment, num_episodes=10):
     """
-    Evaluate the policy by running it through a series of episodes in the environment.
+    Evaluate the policy by running it through a series of episodes in the env.
 
     Args:
         policy: The trained policy to be evaluated.
@@ -63,7 +63,9 @@ def main():
     tf_env = tf_py_environment.TFPyEnvironment(env)
 
     # Load the trained policy
-    policy = load_policy(POLICY_DIR, tf_env.time_step_spec(), tf_env.action_spec())
+    policy = load_policy(
+        POLICY_DIR, tf_env.time_step_spec(), tf_env.action_spec()
+    )
     if policy is None:
         print("Failed to load policy. Exiting.")
         return
