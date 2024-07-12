@@ -93,15 +93,19 @@ collect_steps_per_iteration = COLLECT_STEPS_PER_ITERATION
 log_interval = LOG_INTERVAL
 eval_interval = EVAL_INTERVAL
 
-# Initialize the PolicySaver
-policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None, signatures={'serving_default': tf.function(agent.policy.action).get_concrete_function(time_step=agent.policy.time_step_spec())})
+# Create a placeholder TimeStep object using the spec provided by time_step_spec
+time_step_spec = agent.policy.time_step_spec()
+time_step_placeholder = tf.nest.map_structure(lambda spec: tf.TensorSpec(shape=spec.shape, dtype=spec.dtype), time_step_spec)
+
+# Initialize the PolicySaver with the correct input signature
+policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None, signatures={'serving_default': tf.function(agent.policy.action).get_concrete_function(time_step=time_step_placeholder)})
 
 # Ensure the 'action' method is a callable TensorFlow graph
 assert callable(agent.policy.action), "The 'action' method of the policy is not callable."
 print(f"The 'action' method of the policy is a callable TensorFlow graph: {agent.policy.action}")
 
 # Log the structure of the 'action' method
-concrete_function = tf.function(agent.policy.action).get_concrete_function(time_step=agent.policy.time_step_spec())
+concrete_function = tf.function(agent.policy.action).get_concrete_function(time_step=time_step_placeholder)
 print(f"Concrete function for 'action' method: {concrete_function}")
 print(f"Concrete function input signature: {concrete_function.input_signature}")
 print(f"Concrete function output signature: {concrete_function.output_shapes}")
@@ -146,7 +150,7 @@ try:
                 except Exception as e:
                     print(f"Error creating directory {policy_dir}: {e}")
             try:
-                concrete_function = tf.function(agent.policy.action).get_concrete_function(time_step=agent.policy.time_step_spec())
+                concrete_function = tf.function(agent.policy.action).get_concrete_function(time_step=time_step_placeholder)
                 print(f"Concrete function for 'action' method: {concrete_function}")
                 print(f"Concrete function input signature: {concrete_function.input_signature}")
                 print(f"Concrete function output signature: {concrete_function.output_shapes}")
@@ -167,7 +171,7 @@ try:
         os.makedirs(policy_dir)
 
     try:
-        policy_saver.save(policy_dir, signatures={'serving_default': tf.function(agent.policy.action).get_concrete_function(time_step=agent.policy.time_step_spec())})
+        policy_saver.save(policy_dir, signatures={'serving_default': tf.function(agent.policy.action).get_concrete_function(time_step=time_step_placeholder)})
         print(f"Policy saved successfully in {policy_dir}")
     except Exception as e:
         print(f"Error saving policy: {e}")
