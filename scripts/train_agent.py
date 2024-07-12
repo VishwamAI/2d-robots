@@ -1,5 +1,10 @@
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import tensorflow as tf
 import tf_agents
+print("TF-Agents version:", tf_agents.__version__)
 from tf_agents.environments import tf_py_environment
 from tf_agents.policies import random_tf_policy
 from tf_agents.trajectories import trajectory
@@ -12,7 +17,7 @@ from tf_agents.metrics import tf_metrics
 from tf_agents.eval import metric_utils
 from tf_agents.policies import policy_saver
 
-from environment import BirdRobotEnvironment
+from src.environment import BirdRobotEnvironment
 from config import CONTROL_FREQUENCY, REWARD_COLLISION, REWARD_GOAL, REWARD_STEP, NUM_ITERATIONS, COLLECT_STEPS_PER_ITERATION, LOG_INTERVAL, EVAL_INTERVAL, POLICY_DIR
 import os
 
@@ -135,7 +140,6 @@ try:
                 print(f"Error saving policy at step {step}: {e}")
 
     # Final save of the trained policy
-    policy_dir = POLICY_DIR
     print(f"Attempting final save of policy in directory {policy_dir}")
     if not os.path.exists(policy_dir):
         os.makedirs(policy_dir)

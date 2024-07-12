@@ -16,6 +16,10 @@ from config.config import POLICY_DIR
 print("Current working directory:", os.getcwd())
 print("Python path:", sys.path)
 
+# Print the TensorFlow Agents library version for debugging
+import tf_agents
+print("TF-Agents version:", tf_agents.__version__)
+
 # Create the environment
 eval_py_env = BirdRobotEnvironment()
 eval_env = tf_py_environment.TFPyEnvironment(eval_py_env)
