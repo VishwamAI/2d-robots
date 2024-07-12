@@ -46,3 +46,9 @@ tf_policy_saver = policy_saver.PolicySaver(
 
 # Save the policy
 tf_policy_saver.save(POLICY_DIR)
+
+# Save the 'action' method explicitly
+concrete_action_function = agent.policy.action.get_concrete_function(
+    tf.TensorSpec(shape=[None, *train_env.observation_spec().shape], dtype=train_env.observation_spec().dtype)
+)
+tf.saved_model.save(agent.policy, POLICY_DIR, signatures={'action': concrete_action_function})
