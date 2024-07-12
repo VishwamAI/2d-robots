@@ -5,9 +5,16 @@ from tf_agents.environments import tf_py_environment
 from tf_agents.specs import array_spec
 from tf_agents.trajectories import time_step as ts
 import numpy as np
-from config.config import MAX_SPEED, ACCELERATION, TURN_RATE, SENSOR_RANGE, SENSOR_ANGLE, CONTROL_FREQUENCY, SIMULATION_TIME_STEP, COLLISION_DISTANCE, BOUNDARY_MIN, BOUNDARY_MAX, REWARD_COLLISION, REWARD_GOAL, REWARD_STEP, BOUNDARY_OFFSET, INITIAL_ORIENTATION
+from config.config import (
+    MAX_SPEED, ACCELERATION, TURN_RATE, SENSOR_RANGE, SENSOR_ANGLE,
+    CONTROL_FREQUENCY, SIMULATION_TIME_STEP, COLLISION_DISTANCE, BOUNDARY_MIN,
+    BOUNDARY_MAX, REWARD_COLLISION, REWARD_GOAL, REWARD_STEP, BOUNDARY_OFFSET,
+    INITIAL_ORIENTATION
+)
+
 
 class BirdRobotEnvironment(py_environment.PyEnvironment):
+
     """
     Custom environment for a 2D bird robot navigating through obstacles towards a goal.
 
@@ -44,6 +51,7 @@ class BirdRobotEnvironment(py_environment.PyEnvironment):
             shape=(6 + num_obstacles * 3,), dtype=np.float32, minimum=BOUNDARY_MIN,
             maximum=BOUNDARY_MAX, name='observation'
         )
+
         # State array structure: [x, y, orientation, velocity, goal_x, goal_y, obstacle_x1, obstacle_y1, distance1, ...]
         self._state = np.zeros(6 + num_obstacles * 3, dtype=np.float32)  # Initialize state array
         self._episode_ended = False
@@ -103,11 +111,19 @@ class BirdRobotEnvironment(py_environment.PyEnvironment):
         elif action == self.ACTION_TURN_LEFT:
             self._state[2] = (self._state[2] - TURN_RATE) % 360  # Turn left
         elif action == self.ACTION_MOVE_FORWARD:
-            self._state[0] += self._state[3] * np.cos(np.deg2rad(self._state[2])) * SIMULATION_TIME_STEP  # Move forward
-            self._state[1] += self._state[3] * np.sin(np.deg2rad(self._state[2])) * SIMULATION_TIME_STEP  # Move forward
+            self._state[0] += (
+                self._state[3] * np.cos(np.deg2rad(self._state[2])) * SIMULATION_TIME_STEP
+            )  # Move forward
+            self._state[1] += (
+                self._state[3] * np.sin(np.deg2rad(self._state[2])) * SIMULATION_TIME_STEP
+            )  # Move forward
         elif action == self.ACTION_MOVE_BACKWARD:
-            self._state[0] -= self._state[3] * np.cos(np.deg2rad(self._state[2])) * SIMULATION_TIME_STEP  # Move backward
-            self._state[1] -= self._state[3] * np.sin(np.deg2rad(self._state[2])) * SIMULATION_TIME_STEP  # Move backward
+            self._state[0] -= (
+                self._state[3] * np.cos(np.deg2rad(self._state[2])) * SIMULATION_TIME_STEP
+            )  # Move backward
+            self._state[1] -= (
+                self._state[3] * np.sin(np.deg2rad(self._state[2])) * SIMULATION_TIME_STEP
+            )  # Move backward
 
         # Ensure the orientation stays within 0 to 360 degrees
         self._state[2] = self._state[2] % 360
@@ -120,7 +136,10 @@ class BirdRobotEnvironment(py_environment.PyEnvironment):
             self._state[6 + i * 3] = obstacle[0]
             self._state[7 + i * 3] = obstacle[1]
             distance = np.linalg.norm(self._state[:2] - obstacle)
-            angle = np.arctan2(obstacle[1] - self._state[1], obstacle[0] - self._state[0]) - np.deg2rad(self._state[2])
+            angle = (
+                np.arctan2(obstacle[1] - self._state[1], obstacle[0] - self._state[0])
+                - np.deg2rad(self._state[2])
+            )
             if distance <= SENSOR_RANGE and np.abs(np.rad2deg(angle)) <= SENSOR_ANGLE / 2:
                 self._state[8 + i * 3] = distance
             else:
