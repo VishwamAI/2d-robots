@@ -98,7 +98,8 @@ time_step_spec = agent.policy.time_step_spec
 time_step_placeholder = tf.nest.map_structure(lambda spec: tf.TensorSpec(shape=[None] + list(spec.shape), dtype=spec.dtype), time_step_spec)
 
 # Initialize the PolicySaver with the correct input signature
-policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None, signatures={'serving_default': agent.policy.action.get_concrete_function(time_step=time_step_placeholder)})
+concrete_action_fn = tf.function(agent.policy.action).get_concrete_function(time_step=time_step_placeholder)
+policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None, signatures={'serving_default': concrete_action_fn})
 
 # Ensure the 'action' method is a callable TensorFlow graph
 assert callable(agent.policy.action), "The 'action' method of the policy is not callable."
