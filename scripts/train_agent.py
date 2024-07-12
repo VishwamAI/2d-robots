@@ -164,8 +164,7 @@ try:
                     print(f"Error creating directory {policy_dir}: {e}")
             try:
                 print(f"Concrete function for 'action' method before saving: {concrete_action_fn}")
-                # Removed lines that attempt to access 'input_signature' and 'output_shapes' attributes
-                print(f"Signatures of the policy before saving: {agent.policy.signatures}")
+                print(f"Signatures of the policy before saving: {policy_saver._signatures}")
                 policy_saver.save(policy_dir)
                 print(f"Policy saved successfully in {policy_dir} at step {step}")
                 print(f"Contents of policy directory '{policy_dir}' after saving: {os.listdir(policy_dir)}")
