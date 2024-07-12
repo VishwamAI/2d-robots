@@ -22,13 +22,17 @@ class BirdRobotControl:
         """
         Increases the velocity of the bird robot.
         """
-        self.velocity = np.clip(self.velocity + ACCELERATION, -MAX_SPEED, MAX_SPEED)
+        self.velocity = np.clip(
+            self.velocity + ACCELERATION, -MAX_SPEED, MAX_SPEED
+        )
 
     def decelerate(self):
         """
         Decreases the velocity of the bird robot.
         """
-        self.velocity = np.clip(self.velocity - ACCELERATION, -MAX_SPEED, MAX_SPEED)
+        self.velocity = np.clip(
+            self.velocity - ACCELERATION, -MAX_SPEED, MAX_SPEED
+        )
 
     def turn_right(self):
         """
