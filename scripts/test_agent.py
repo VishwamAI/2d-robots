@@ -38,14 +38,14 @@ try:
     # Debugging: Print the signatures of the loaded policy
     print(f"Signatures of loaded policy: {saved_policy.signatures}")
     # Create a policy object using the loaded policy's 'action' signature
-    policy = py_tf_eager_policy.SavedModelPyTFEagerPolicy(saved_policy, time_step_spec=eval_env.time_step_spec())
+    action_fn = saved_policy.signatures['action']
 except Exception as e:
     raise RuntimeError(f"Error loading policy from '{policy_dir}': {e}")
 
 # Debugging: Print the contents of the policy directory and inspect the loaded policy object
 print(f"Contents of policy directory '{policy_dir}': {os.listdir(policy_dir)}")
-print(f"Loaded policy object: {policy}")
-print(f"Attributes of loaded policy object: {dir(policy)}")
+print(f"Loaded policy object: {saved_policy}")
+print(f"Attributes of loaded policy object: {dir(saved_policy)}")
 
 # Run a few episodes and print the results
 num_episodes = 10
@@ -55,12 +55,12 @@ for _ in range(num_episodes):
 
     while not time_step.is_last():
         try:
-            action_step = policy.action(time_step)
+            action_step = action_fn(time_step)
             time_step = eval_env.step(action_step.action)
             episode_return += time_step.reward
         except AttributeError as e:
             print(f"AttributeError during policy execution: {e}")
-            print(f"Attributes of policy object: {dir(policy)}")
+            print(f"Attributes of policy object: {dir(saved_policy)}")
             raise
 
     print('Episode return: {}'.format(episode_return))
