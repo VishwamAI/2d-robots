@@ -33,7 +33,10 @@ class BirdRobotSensors:
                 np.arctan2(obstacle[1] - position[1], obstacle[0] - position[0])
                 - np.deg2rad(orientation)
             )
-            if distance <= SENSOR_RANGE and np.abs(np.rad2deg(angle)) <= SENSOR_ANGLE / 2:
+            if (
+                distance <= SENSOR_RANGE
+                and np.abs(np.rad2deg(angle)) <= SENSOR_ANGLE / 2
+            ):
                 distances.append(distance)
             else:
                 distances.append(SENSOR_RANGE)
@@ -54,5 +57,7 @@ class BirdRobotSensors:
             distance1, distance2, ...].
         """
         distances = self.detect_obstacles(position, orientation)
-        state = np.concatenate(([position[0], position[1], orientation], distances))
+        state = np.concatenate(
+            ([position[0], position[1], orientation], distances)
+        )
         return state
