@@ -97,11 +97,11 @@ eval_interval = EVAL_INTERVAL
 time_step_spec = agent.policy.time_step_spec
 time_step_placeholder = tf.nest.map_structure(lambda spec: tf.TensorSpec(shape=[None] + list(spec.shape), dtype=spec.dtype), time_step_spec)
 
-# Initialize the PolicySaver without the 'signatures' keyword argument
-concrete_action_fn = tf.function(agent.policy.action).get_concrete_function(time_step=time_step_placeholder)
-print(f"Concrete function for 'action' method: {concrete_action_fn}")
-policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None, signatures={'serving_default': concrete_action_fn})
-print(f"PolicySaver initialized")
+# Initialize the PolicySaver with the 'signatures' keyword argument to include the 'action' method
+concrete_function = agent.policy.action.get_concrete_function(time_step=time_step_placeholder)
+print(f"Concrete function for 'action' method: {concrete_function}")
+policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None, signatures={'serving_default': concrete_function})
+print(f"PolicySaver initialized with 'action' method included in signatures: {policy_saver.signatures}")
 
 # Ensure the 'action' method is a callable TensorFlow graph
 assert callable(agent.policy.action), "The 'action' method of the policy is not callable."
@@ -163,12 +163,15 @@ try:
                 except Exception as e:
                     print(f"Error creating directory {policy_dir}: {e}")
             try:
-                print(f"Concrete function for 'action' method before saving: {concrete_action_fn}")
-                print(f"Signatures of the policy before saving: {policy_saver._signatures}")
+                # Debugging: Print the policy object before saving
+                print(f"Policy object before saving: {agent.policy}")
+                print(f"Concrete function for 'action' method before saving: {concrete_function}")
                 policy_saver.save(policy_dir)
                 print(f"Policy saved successfully in {policy_dir} at step {step}")
                 print(f"Contents of policy directory '{policy_dir}' after saving: {os.listdir(policy_dir)}")
                 saved_policy = tf.compat.v2.saved_model.load(policy_dir)
+                # Debugging: Print the saved model object after loading
+                print(f"Saved model object after loading: {saved_policy}")
                 print(f"Attributes of saved policy object: {dir(saved_policy)}")
                 print(f"Signatures of the loaded policy: {saved_policy.signatures}")
                 if 'action' in saved_policy.signatures:
