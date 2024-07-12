@@ -3,9 +3,18 @@ from tf_agents.environments import tf_py_environment
 from tf_agents.policies import py_tf_eager_policy
 from tf_agents.trajectories import time_step as ts
 import numpy as np
+import os
+import sys
+
+# Add the project's root directory to the Python path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from environments.environment import BirdRobotEnvironment
 from config import POLICY_DIR
-import os
+
+# Print the current working directory and Python path for debugging
+print("Current working directory:", os.getcwd())
+print("Python path:", sys.path)
 
 # Create the environment
 eval_py_env = BirdRobotEnvironment()
