@@ -2,7 +2,7 @@ import os
 import sys
 
 # Append the src directory to the Python path
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))  # noqa: E402
 
 import tensorflow as tf
 from tf_agents.environments import tf_py_environment
