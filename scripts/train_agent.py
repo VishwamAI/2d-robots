@@ -12,7 +12,7 @@ from tf_agents.drivers import dynamic_step_driver
 from tf_agents.metrics import tf_metrics
 from tf_agents.eval import metric_utils
 from tf_agents.policies import policy_saver
-from src.environment import BirdRobotEnvironment
+from environments.environment import BirdRobotEnvironment
 from config.config import (
     NUM_ITERATIONS,
     COLLECT_STEPS_PER_ITERATION,
