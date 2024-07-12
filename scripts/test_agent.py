@@ -33,6 +33,11 @@ try:
 except Exception as e:
     raise RuntimeError(f"Error loading policy from '{policy_dir}': {e}")
 
+# Debugging: Print the contents of the policy directory and inspect the loaded policy object
+print(f"Contents of policy directory '{policy_dir}': {os.listdir(policy_dir)}")
+print(f"Loaded policy object: {policy}")
+print(f"Attributes of loaded policy object: {dir(policy)}")
+
 # Run a few episodes and print the results
 num_episodes = 10
 for _ in range(num_episodes):
