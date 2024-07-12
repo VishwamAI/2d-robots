@@ -183,6 +183,10 @@ try:
         os.makedirs(policy_dir)
 
     try:
+        # Ensure the 'action' method is included in the 'serving_default' signature
+        concrete_action_fn = tf.function(agent.policy.action).get_concrete_function(time_step=time_step_placeholder)
+        policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None, signatures={'serving_default': concrete_action_fn})
+
         policy_saver.save(policy_dir)
         print(f"Policy saved successfully in {policy_dir}")
         # Print the signatures of the saved model for debugging
