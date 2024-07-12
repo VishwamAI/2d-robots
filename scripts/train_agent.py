@@ -96,6 +96,10 @@ eval_interval = EVAL_INTERVAL
 # Initialize the PolicySaver
 policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None, signatures={'action': tf.function(agent.policy.action).get_concrete_function()})
 
+# Ensure the 'action' method is a callable TensorFlow graph
+assert callable(agent.policy.action), "The 'action' method of the policy is not callable."
+print(f"The 'action' method of the policy is a callable TensorFlow graph: {agent.policy.action}")
+
 # Training loop
 try:
     for _ in range(num_iterations):
