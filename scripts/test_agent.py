@@ -40,6 +40,8 @@ try:
     else:
         print("The loaded policy does NOT have an 'action' method.")
 except Exception as e:
+    # Debugging: Print the exception details
+    print(f"Exception details: {e}")
     raise RuntimeError(
         f"Error loading policy from '{policy_dir}': {e}"
     )
