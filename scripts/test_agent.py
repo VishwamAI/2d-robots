@@ -28,9 +28,17 @@ print(f"Contents of policy_dir ({policy_dir}): {os.listdir(policy_dir)}")
 # Debugging: Print the POLICY_DIR value
 print(f"POLICY_DIR: {POLICY_DIR}")
 
+# Debugging: List contents of the saved model directory
+for root, dirs, files in os.walk(policy_dir):
+    print(f"Directory: {root}")
+    print(f"Subdirectories: {dirs}")
+    print(f"Files: {files}")
+
 try:
     policy = py_tf_eager_policy.SavedModelPyTFEagerPolicy(
-        policy_dir, time_step_spec=eval_env.time_step_spec()
+        policy_dir,
+        time_step_spec=eval_env.time_step_spec(),
+        action_spec=eval_env.action_spec()
     )
     # Debugging: Print the loaded policy object
     print(f"Loaded policy: {policy}")
@@ -39,6 +47,8 @@ try:
         print("The loaded policy has an 'action' method.")
     else:
         print("The loaded policy does NOT have an 'action' method.")
+        # Debugging: Print the available attributes of the policy object
+        print(f"Available attributes of the policy object: {dir(policy)}")
 except Exception as e:
     # Debugging: Print the exception details
     print(f"Exception details: {e}")
