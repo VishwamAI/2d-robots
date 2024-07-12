@@ -121,14 +121,14 @@ try:
         observations = experience.observation
         print(f"Shape of observations: {tf.shape(observations)}")
         # Ensure observations have a batch dimension
-        batched_observations = tf.nest.map_structure(lambda x: tf.expand_dims(x, axis=0), observations)
+        batched_observations = tf.nest.map_structure(lambda x: tf.expand_dims(x, axis=0) if len(x.shape) == 1 else x, observations)
         print(f"Observations shape: {observations.shape}\nBatched observations shape: {batched_observations.shape}")
         print(f"Shape of batched observations: {tf.shape(batched_observations)}")
         print(f"QNetwork input spec: {q_net.input_tensor_spec}")
         with tf.GradientTape() as tape:
             # Ensure the input to the QNetwork has the correct shape
             q_values, _ = q_net(batched_observations, training=True)
-            loss = agent._loss(batched_observations)
+            loss = agent._loss(experience)
             print(f"Shape of input to QNetwork: {tf.shape(batched_observations)}")
         gradients = tape.gradient(loss, agent.trainable_variables)
         agent._optimizer.apply_gradients(zip(gradients, agent.trainable_variables))
