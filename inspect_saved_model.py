@@ -9,6 +9,9 @@ print(f"Available signatures: {list(saved_model.signatures.keys())}")
 
 # Print the details of the 'serving_default' signature if it exists
 if 'serving_default' in saved_model.signatures:
-    print(f"Serving default signature: {saved_model.signatures['serving_default']}")
+    serving_default_signature = saved_model.signatures['serving_default']
+    print(f"Serving default signature: {serving_default_signature}")
 else:
-    print("The 'serving_default' signature is not available in the saved model.")
+    print(
+        "The 'serving_default' signature is not available in the saved model."
+    )
