@@ -61,6 +61,8 @@ replay_buffer = tf_uniform_replay_buffer.TFUniformReplayBuffer(
 )
 
 # Define the data collection function
+
+
 def collect_step(environment, policy, buffer):
     time_step = environment.current_time_step()
     action_step = policy.action(time_step)
@@ -104,7 +106,8 @@ dataset = replay_buffer.as_dataset(
 
 iterator = iter(dataset)
 
-# (Optional) Optimize by wrapping some of the code in a graph using TF function.
+# (Optional) Optimize by wrapping some of the code in a graph using TF
+# function.
 agent.train = common.function(agent.train)
 
 # Reset the train step
@@ -126,11 +129,15 @@ for _ in range(num_iterations):
     step = agent.train_step_counter.numpy()
 
     if step % log_interval == 0:
-        print(f"step = {step}: loss = {train_loss}")
+        print(f"step = {step}: "
+              f"loss = {train_loss}")
 
     if step % eval_interval == 0:
-        avg_return = compute_avg_return(eval_env, agent.policy, num_eval_episodes)
-        print(f"step = {step}: Average Return = {avg_return}")
+        avg_return = compute_avg_return(
+            eval_env, agent.policy, num_eval_episodes
+        )
+        print(f"step = {step}: "
+              f"Average Return = {avg_return}")
         returns.append(avg_return)
 
 # Save the policy
