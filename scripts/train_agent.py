@@ -234,8 +234,8 @@ try:
                     # Additional debugging: Print the available methods in the saved policy
                     print(f"Available methods in saved policy: {dir(saved_policy)}")
                     # Additional debugging: Print the concrete function for 'action' method
-                    concrete_function = saved_policy.signatures.get("serving_default")
-                    print(f"Concrete function for 'serving_default': {concrete_function}")
+                    concrete_function = saved_policy.signatures.get("action")
+                    print(f"Concrete function for 'action': {concrete_function}")
             except Exception as e:
                 print(f"Error saving policy at step {step}: {e}")
 
