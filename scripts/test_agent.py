@@ -30,13 +30,15 @@ if not os.path.exists(policy_dir):
     raise FileNotFoundError(f"Policy directory '{policy_dir}' does not exist. Please ensure the model is trained and saved correctly.")
 
 try:
-    policy = py_tf_eager_policy.SavedModelPyTFEagerPolicy(model_path=policy_dir, time_step_spec=eval_env.time_step_spec())
-    # Check if the policy object has the 'action' method
-    if not hasattr(policy, 'action'):
+    # Load the saved policy using tf.saved_model.load
+    saved_policy = tf.saved_model.load(policy_dir)
+    # Check if the saved policy has the 'action' method
+    if 'action' not in saved_policy.signatures:
         raise AttributeError("Loaded policy object does not have an 'action' method.")
-    # Debugging: Print the metadata of the loaded policy
-    metadata = policy.get_metadata()
-    print(f"Metadata of loaded policy: {metadata}")
+    # Debugging: Print the signatures of the loaded policy
+    print(f"Signatures of loaded policy: {saved_policy.signatures}")
+    # Create a policy object using the loaded policy's 'action' signature
+    policy = py_tf_eager_policy.SavedModelPyTFEagerPolicy(saved_policy, time_step_spec=eval_env.time_step_spec())
 except Exception as e:
     raise RuntimeError(f"Error loading policy from '{policy_dir}': {e}")
 
