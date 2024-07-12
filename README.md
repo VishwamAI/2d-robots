@@ -53,6 +53,9 @@ If you encounter a `FileNotFoundError` indicating that the policy directory does
 ### TensorFlow Errors
 If you encounter TensorFlow-specific errors, ensure that TensorFlow and TF-Agents are installed correctly in your virtual environment. Refer to the `requirements.txt` file for the required versions and install them using `pip install -r requirements.txt`.
 
+### AttributeError in `test_agent.py`
+If you encounter an `AttributeError` indicating that the 'action' method is not found in the loaded policy object, ensure that the policy is saved correctly with the 'serving_default' signature. The `train_agent.py` script should include the 'action' method in the 'serving_default' signature when saving the policy. If the error persists, retrain the policy and save it again, ensuring that the 'action' method is included in the 'serving_default' signature.
+
 ## Contributing
 Contributions are welcome! Please fork the repository and create a pull request with your changes. Ensure that your code follows the project's coding standards and includes appropriate tests. When submitting a pull request, provide a clear description of the changes and the motivation behind them.
 
