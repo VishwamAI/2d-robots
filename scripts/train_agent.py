@@ -127,12 +127,12 @@ print(
     f"The 'action' method of the policy is a callable TensorFlow graph: {agent.policy.action}"
 )
 
-# Log the structure of the 'action' method
+# Register the 'action' method as a concrete function
 concrete_function = tf.function(agent.policy.action).get_concrete_function(
     time_step=time_step_placeholder
 )
+policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None, signatures={'action': concrete_function})
 print(f"Concrete function for 'action' method: {concrete_function}")
-# Removed lines that attempt to access 'input_signature' and 'output_shapes' attributes
 
 # Training loop
 try:
