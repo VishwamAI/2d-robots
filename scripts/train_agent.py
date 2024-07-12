@@ -150,7 +150,7 @@ try:
         # Ensure observations have the correct shape expected by the QNetwork
         batched_observations = tf.nest.map_structure(
             lambda x: tf.ensure_shape(
-                x, [None] + list(q_net.input_tensor_spec.shape[1:])
+                x, [None] + list(train_env.observation_spec().shape)
             ),
             batched_observations,
         )
