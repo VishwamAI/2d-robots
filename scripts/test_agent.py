@@ -25,6 +25,9 @@ if not os.path.exists(policy_dir):
 # Debugging: List contents of policy_dir
 print(f"Contents of policy_dir ({policy_dir}): {os.listdir(policy_dir)}")
 
+# Debugging: Print the POLICY_DIR value
+print(f"POLICY_DIR: {POLICY_DIR}")
+
 try:
     policy = py_tf_eager_policy.SavedModelPyTFEagerPolicy(
         policy_dir, time_step_spec=eval_env.time_step_spec()
