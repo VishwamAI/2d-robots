@@ -117,16 +117,8 @@ time_step_placeholder = tf.nest.map_structure(
     time_step_spec,
 )
 
-# Initialize the PolicySaver with the 'signatures' keyword argument to include the 'action' method
-concrete_function = agent.policy.action.get_concrete_function(
-    time_step=time_step_placeholder
-)
-print(f"Concrete function for 'action' method: {concrete_function}")
-policy_saver = policy_saver.PolicySaver(
-    agent.policy, batch_size=None, signatures={"action": concrete_function}
-)
-print(f"PolicySaver initialized with 'action' method included in signatures: {policy_saver.signatures}")
-print(f"Signatures before saving: {policy_saver.signatures}")
+policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None)
+print(f"PolicySaver initialized with 'action' method registered: {policy_saver.signatures}")
 
 # Ensure the 'action' method is a callable TensorFlow graph
 assert callable(
