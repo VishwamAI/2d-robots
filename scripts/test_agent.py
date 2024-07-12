@@ -68,3 +68,6 @@ for _ in range(num_episodes):
         episode_return += time_step.reward
 
     print(f'Episode return: {episode_return}')
+
+# New debugging statement to confirm changes
+print("Debugging statement: End of script reached.")
