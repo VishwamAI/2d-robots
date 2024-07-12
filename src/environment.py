@@ -35,11 +35,15 @@ class BirdRobotEnvironment(py_environment.PyEnvironment):
         and sets up the initial state and obstacles.
         """
         self._action_spec = array_spec.BoundedArraySpec(
-            shape=(), dtype=np.int32, minimum=self.ACTION_ACCELERATE, maximum=self.ACTION_MOVE_BACKWARD, name='action')
+            shape=(), dtype=np.int32, minimum=self.ACTION_ACCELERATE,
+            maximum=self.ACTION_MOVE_BACKWARD, name='action'
+        )
         self._obstacles = [np.array([20, 20]), np.array([40, 40]), np.array([60, 60])]  # Example obstacles
         num_obstacles = len(self._obstacles)
         self._observation_spec = array_spec.BoundedArraySpec(
-            shape=(6 + num_obstacles * 3,), dtype=np.float32, minimum=BOUNDARY_MIN, maximum=BOUNDARY_MAX, name='observation')
+            shape=(6 + num_obstacles * 3,), dtype=np.float32, minimum=BOUNDARY_MIN,
+            maximum=BOUNDARY_MAX, name='observation'
+        )
         # State array structure: [x, y, orientation, velocity, goal_x, goal_y, obstacle_x1, obstacle_y1, distance1, ...]
         self._state = np.zeros(6 + num_obstacles * 3, dtype=np.float32)  # Initialize state array
         self._episode_ended = False
@@ -122,8 +126,9 @@ class BirdRobotEnvironment(py_environment.PyEnvironment):
             else:
                 self._state[8 + i * 3] = SENSOR_RANGE
 
-        # Check if the episode has ended
-        if np.any(self._state[:2] < BOUNDARY_MIN + BOUNDARY_OFFSET) or np.any(self._state[:2] > BOUNDARY_MAX - BOUNDARY_OFFSET):
+        if np.any(self._state[:2] < BOUNDARY_MIN + BOUNDARY_OFFSET) or np.any(
+            self._state[:2] > BOUNDARY_MAX - BOUNDARY_OFFSET
+        ):
             self._episode_ended = True
             return ts.termination(self._get_observation(), reward=REWARD_COLLISION)
 
