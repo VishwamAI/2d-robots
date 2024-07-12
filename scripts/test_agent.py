@@ -13,7 +13,8 @@ eval_env = tf_py_environment.TFPyEnvironment(eval_py_env)
 policy_dir = POLICY_DIR
 if not os.path.exists(policy_dir):
     raise FileNotFoundError(
-        f"Policy directory '{policy_dir}' does not exist. Please ensure the model is trained and saved correctly."
+        f"Policy directory '{policy_dir}' does not exist. "
+        "Please ensure the model is trained and saved correctly."
     )
 
 try:
@@ -22,7 +23,9 @@ try:
         saved_policy, time_step_spec=eval_env.time_step_spec()
     )
 except Exception as e:
-    raise RuntimeError(f"Error loading policy from '{policy_dir}': {e}")
+    raise RuntimeError(
+        f"Error loading policy from '{policy_dir}': {e}"
+    )
 
 # Run a few episodes and print the results
 num_episodes = 10
