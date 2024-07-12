@@ -205,6 +205,13 @@ try:
                 )
                 policy_saver.save(policy_dir)
                 print(f"Policy saved successfully in {policy_dir} at step {step}")
+                print(f"Signatures of the saved model: {saved_policy.signatures}")
+                if "action" in saved_policy.signatures:
+                    print(f"'action' method signature: {saved_policy.signatures['action']}")
+                else:
+                    print("The 'action' method is not present in the saved model signatures.")
+                    # Additional debugging: Print the available methods in the saved model
+                    print(f"Available methods in saved policy: {dir(saved_policy)}")
                 print(
                     f"Contents of policy directory '{policy_dir}' after saving: {os.listdir(policy_dir)}"
                 )
@@ -264,3 +271,11 @@ else:
 
 # Additional Debugging
 print("Debugging - Signatures after saving:", saved_policy.signatures)
+
+# Debugging: Confirm 'action' method in policy signatures
+saved_policy = tf.compat.v2.saved_model.load(policy_dir)
+if 'action' in saved_policy.signatures:
+    print(f"'action' method is in policy signatures: {saved_policy.signatures['action']}")
+else:
+    print("'action' method is NOT in policy signatures")
+
