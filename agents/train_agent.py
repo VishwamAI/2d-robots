@@ -144,7 +144,8 @@ for _ in range(num_iterations):
 policy_dir = './policy'
 tf_policy_saver = policy_saver.PolicySaver(
     agent.policy,
-    batch_size=None,
-    use_nest_path_signatures=True
+    batch_size=1,  # Specify a batch size of 1
+    use_nest_path_signatures=True,
+    train_step=train_step_counter  # Include the train step counter
 )
 tf_policy_saver.save(policy_dir)
