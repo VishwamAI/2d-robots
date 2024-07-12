@@ -12,7 +12,8 @@ from tf_agents.policies import policy_saver
 
 from environment import BirdRobotEnvironment
 from config import (
-    NUM_ITERATIONS, COLLECT_STEPS_PER_ITERATION, LOG_INTERVAL, EVAL_INTERVAL, POLICY_DIR
+    NUM_ITERATIONS, COLLECT_STEPS_PER_ITERATION, LOG_INTERVAL, EVAL_INTERVAL,
+    POLICY_DIR
 )
 import os
 
@@ -50,7 +51,9 @@ replay_buffer = tf_uniform_replay_buffer.TFUniformReplayBuffer(
     max_length=100000)
 
 # Set up the random policy
-random_policy = random_tf_policy.RandomTFPolicy(train_env.time_step_spec(), train_env.action_spec())
+random_policy = random_tf_policy.RandomTFPolicy(
+    train_env.time_step_spec(), train_env.action_spec()
+)
 
 # Set up the metrics
 train_metrics = [
@@ -120,7 +123,8 @@ try:
         if step % (eval_interval // 10) == 0:
             policy_dir = POLICY_DIR
             print(
-                f"Attempting to save policy at step {step} in directory {policy_dir}"
+                f"Attempting to save policy at step {step} in directory "
+                f"{policy_dir}"
             )
             if not os.path.exists(policy_dir):
                 try:
@@ -135,7 +139,8 @@ try:
             try:
                 policy_saver.save(policy_dir)
                 print(
-                    f"Policy saved successfully in {policy_dir} at step {step}"
+                    f"Policy saved successfully in {policy_dir} at step "
+                    f"{step}"
                 )
             except Exception as e:
                 print(
