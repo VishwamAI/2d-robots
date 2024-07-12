@@ -1,6 +1,5 @@
 import os
 import sys
-import tensorflow as tf
 from tf_agents.environments import tf_py_environment
 from tf_agents.policies import py_tf_eager_policy
 from src.environment import BirdRobotEnvironment
