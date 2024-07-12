@@ -30,7 +30,9 @@ class BirdRobotSensors:
         distances = []
         for obstacle in self.obstacles:
             distance = np.linalg.norm(position - obstacle)
-            angle_to_obstacle = np.arctan2(obstacle[1] - position[1], obstacle[0] - position[0])
+            angle_to_obstacle = np.arctan2(
+                obstacle[1] - position[1], obstacle[0] - position[0]
+            )
             angle = angle_to_obstacle - np.deg2rad(orientation)
             if (
                 distance <= SENSOR_RANGE
