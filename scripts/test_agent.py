@@ -34,6 +34,9 @@ try:
     # Check if the policy object has the 'action' method
     if not hasattr(policy, 'action'):
         raise AttributeError("Loaded policy object does not have an 'action' method.")
+    # Debugging: Print the metadata of the loaded policy
+    metadata = policy.get_metadata()
+    print(f"Metadata of loaded policy: {metadata}")
 except Exception as e:
     raise RuntimeError(f"Error loading policy from '{policy_dir}': {e}")
 
