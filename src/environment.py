@@ -1,17 +1,14 @@
-import tensorflow as tf
-import tf_agents
+import numpy as np
 from tf_agents.environments import py_environment
 from tf_agents.environments import tf_py_environment
 from tf_agents.specs import array_spec
 from tf_agents.trajectories import time_step as ts
-import numpy as np
 from config.config import (
     MAX_SPEED,
     ACCELERATION,
     TURN_RATE,
     SENSOR_RANGE,
     SENSOR_ANGLE,
-    CONTROL_FREQUENCY,
     SIMULATION_TIME_STEP,
     COLLISION_DISTANCE,
     BOUNDARY_MIN,
@@ -94,12 +91,14 @@ class BirdRobotEnvironment(py_environment.PyEnvironment):
             6 + num_obstacles * 3, dtype=np.float32
         )  # Reset to initial position and goal
         self._state[:2] = [
-            BOUNDARY_MIN + BOUNDARY_OFFSET, BOUNDARY_MIN + BOUNDARY_OFFSET
+            BOUNDARY_MIN + BOUNDARY_OFFSET,
+            BOUNDARY_MIN + BOUNDARY_OFFSET
         ]  # Set initial position (x, y)
         self._state[2] = INITIAL_ORIENTATION  # Set initial orientation
         self._state[3] = 0.0  # Set initial velocity
         self._state[4:6] = [
-            BOUNDARY_MAX - BOUNDARY_OFFSET, BOUNDARY_MAX - BOUNDARY_OFFSET
+            BOUNDARY_MAX - BOUNDARY_OFFSET,
+            BOUNDARY_MAX - BOUNDARY_OFFSET
         ]  # Set goal position (goal_x, goal_y)
         for i, obstacle in enumerate(self._obstacles):
             self._state[6 + i * 3:8 + i * 3] = obstacle  # Set obstacle positions (obstacle_x, obstacle_y)
@@ -112,20 +111,26 @@ class BirdRobotEnvironment(py_environment.PyEnvironment):
         Updates the environment state based on the action taken by the agent.
 
         Args:
-            action (int): The action to be taken by the agent. Valid actions are defined by the ACTION_* constants.
+            action (int): The action to be taken by the agent. Valid actions are
+            defined by the ACTION_* constants.
 
         Returns:
-            ts.TimeStep: A TimeStep object representing the new state of the environment. The TimeStep object contains:
+            ts.TimeStep: A TimeStep object representing the new state of the
+            environment. The TimeStep object contains:
                 - observation: The new state of the environment.
                 - reward: The reward received for taking the action.
                 - step_type: The type of the time step (FIRST, MID, or LAST).
                 - discount: The discount factor for future rewards.
 
         Termination Conditions:
-            - The episode ends if the bird robot collides with an obstacle or goes out of bounds, resulting in a reward of REWARD_COLLISION.
-            - The episode ends if the bird robot reaches the goal, resulting in a reward of REWARD_GOAL.
-            - If the episode has ended, a termination TimeStep is returned with a reward of 0.0.
-            - Otherwise, a transition TimeStep is returned with a reward of REWARD_STEP and a discount factor of 0.9.
+            - The episode ends if the bird robot collides with an obstacle or goes
+            out of bounds, resulting in a reward of REWARD_COLLISION.
+            - The episode ends if the bird robot reaches the goal, resulting in a
+            reward of REWARD_GOAL.
+            - If the episode has ended, a termination TimeStep is returned with a
+            reward of 0.0.
+            - Otherwise, a transition TimeStep is returned with a reward of
+            REWARD_STEP and a discount factor of 0.9.
         """
         if self._episode_ended:
             return self.reset()
