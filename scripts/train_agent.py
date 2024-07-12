@@ -109,7 +109,6 @@ time_step_placeholder = tf.nest.map_structure(
 )
 
 policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None)
-print(f"Concrete function for 'action' method: {concrete_function}")
 
 # Ensure the 'action' method is a callable TensorFlow graph
 assert callable(
@@ -200,9 +199,6 @@ try:
             try:
                 # Debugging: Print the policy object before saving
                 print(f"Policy object before saving: {agent.policy}")
-                print(
-                    f"Concrete function for 'action' method before saving: {concrete_function}"
-                )
                 policy_saver.save(policy_dir)
                 print(f"Policy saved successfully in {policy_dir} at step {step}")
                 saved_policy = tf.compat.v2.saved_model.load(policy_dir)
@@ -231,8 +227,6 @@ try:
                     # Additional debugging: Print the available methods in the saved policy
                     print(f"Available methods in saved policy: {dir(saved_policy)}")
                     # Additional debugging: Print the concrete function for 'action' method
-                    concrete_function = saved_policy.signatures.get("action")
-                    print(f"Concrete function for 'action': {concrete_function}")
             except Exception as e:
                 print(f"Error saving policy at step {step}: {e}")
 
@@ -258,8 +252,6 @@ try:
             # Additional debugging: Print the available methods in the saved model
             print(f"Available methods in saved model: {dir(saved_model)}")
             # Additional debugging: Print the concrete function for 'action' method
-            concrete_function = saved_model.signatures.get("action")
-            print(f"Concrete function for 'action': {concrete_function}")
     except Exception as e:
         print(f"Error saving policy: {e}")
 except Exception as e:
