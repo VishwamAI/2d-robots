@@ -1,10 +1,9 @@
-import tensorflow as tf
 import numpy as np
 from tf_agents.environments import tf_py_environment
-from tf_agents.policies import policy_saver, SavedModelPyTFEagerPolicy
-from tf_agents.trajectories import time_step as ts
+from tf_agents.policies import SavedModelPyTFEagerPolicy
 from src.environment import BirdRobotEnvironment
 from config.config import POLICY_DIR
+
 
 def load_policy(policy_dir, time_step_spec, action_spec):
     """
@@ -19,7 +18,9 @@ def load_policy(policy_dir, time_step_spec, action_spec):
         tf_policy: The loaded policy.
     """
     try:
-        policy = SavedModelPyTFEagerPolicy(policy_dir, time_step_spec=time_step_spec, action_spec=action_spec)
+        policy = SavedModelPyTFEagerPolicy(
+            policy_dir, time_step_spec=time_step_spec, action_spec=action_spec
+        )
         print(f"Policy loaded successfully from {policy_dir}")
         print(f"Loaded policy object: {policy}")
         print(f"Policy methods: {dir(policy)}")
@@ -30,6 +31,7 @@ def load_policy(policy_dir, time_step_spec, action_spec):
         print(f"Time step spec: {time_step_spec}")
         print(f"Action spec: {action_spec}")
         return None
+
 
 def evaluate_policy(policy, environment, num_episodes=10):
     """
@@ -54,6 +56,7 @@ def evaluate_policy(policy, environment, num_episodes=10):
         total_rewards.append(episode_reward.numpy())
     return total_rewards
 
+
 def main():
     # Create the environment
     env = BirdRobotEnvironment()
@@ -69,6 +72,7 @@ def main():
     rewards = evaluate_policy(policy, tf_env)
     print(f"Total rewards for each episode: {rewards}")
     print(f"Average reward: {np.mean(rewards)}")
+
 
 if __name__ == "__main__":
     main()
