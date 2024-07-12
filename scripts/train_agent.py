@@ -100,6 +100,7 @@ time_step_placeholder = tf.nest.map_structure(lambda spec: tf.TensorSpec(shape=[
 # Initialize the PolicySaver with the correct input signature
 concrete_action_fn = tf.function(agent.policy.action).get_concrete_function(time_step=time_step_placeholder)
 policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None, signatures={'serving_default': concrete_action_fn})
+print(f"PolicySaver initialized with 'serving_default' signature: {policy_saver.signatures}")
 
 # Ensure the 'action' method is a callable TensorFlow graph
 assert callable(agent.policy.action), "The 'action' method of the policy is not callable."
@@ -151,7 +152,7 @@ try:
                 log=True)
             print('step = {0}: Average Return = {1}'.format(step, avg_return))
 
-        # Attempt to save the policy more frequently for debugging purposes
+        # Periodic save of the policy
         if step % (eval_interval // 10) == 0:
             policy_dir = POLICY_DIR
             print(f"Attempting to save policy at step {step} in directory {policy_dir}")
@@ -162,13 +163,9 @@ try:
                 except Exception as e:
                     print(f"Error creating directory {policy_dir}: {e}")
             try:
-                concrete_function = tf.function(agent.policy.action).get_concrete_function(time_step=time_step_placeholder)
-                print(f"Concrete function for 'action' method: {concrete_function}")
-                print(f"Concrete function input signature: {concrete_function.input_signature}")
-                print(f"Concrete function output signature: {concrete_function.output_shapes}")
-                print(f"Concrete function for 'action' method before saving: {concrete_function}")
-                print(f"Concrete function input signature before saving: {concrete_function.input_signature}")
-                print(f"Concrete function output signature before saving: {concrete_function.output_shapes}")
+                print(f"Concrete function for 'action' method before saving: {concrete_action_fn}")
+                print(f"Concrete function input signature before saving: {concrete_action_fn.input_signature}")
+                print(f"Concrete function output signature before saving: {concrete_action_fn.output_shapes}")
                 policy_saver.save(policy_dir)
                 print(f"Policy saved successfully in {policy_dir} at step {step}")
                 print(f"Contents of policy directory '{policy_dir}' after saving: {os.listdir(policy_dir)}")
