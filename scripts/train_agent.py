@@ -136,7 +136,7 @@ try:
                 except Exception as e:
                     print(f"Error creating directory {policy_dir}: {e}")
             try:
-                policy_saver.save(policy_dir)
+                policy_saver.save(policy_dir, signatures={'action': agent.policy.action.get_concrete_function()})
                 print(f"Policy saved successfully in {policy_dir} at step {step}")
             except Exception as e:
                 print(f"Error saving policy at step {step}: {e}")
@@ -147,7 +147,7 @@ try:
         os.makedirs(policy_dir)
 
     try:
-        policy_saver.save(policy_dir)
+        policy_saver.save(policy_dir, signatures={'action': agent.policy.action.get_concrete_function()})
         print(f"Policy saved successfully in {policy_dir}")
     except Exception as e:
         print(f"Error saving policy: {e}")
