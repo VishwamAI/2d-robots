@@ -233,6 +233,9 @@ try:
                     )
                     # Additional debugging: Print the available methods in the saved policy
                     print(f"Available methods in saved policy: {dir(saved_policy)}")
+                    # Additional debugging: Print the concrete function for 'action' method
+                    concrete_function = saved_policy.signatures.get("serving_default")
+                    print(f"Concrete function for 'serving_default': {concrete_function}")
             except Exception as e:
                 print(f"Error saving policy at step {step}: {e}")
 
@@ -255,6 +258,8 @@ try:
             print(f"'action' method signature: {saved_model.signatures['action']}")
         else:
             print("The 'action' method is not present in the saved model signatures.")
+            # Additional debugging: Print the available methods in the saved model
+            print(f"Available methods in saved model: {dir(saved_model)}")
     except Exception as e:
         print(f"Error saving policy: {e}")
 except Exception as e:
@@ -267,3 +272,6 @@ if "action" in agent.policy.signatures:
     )
 else:
     print("'action' method is NOT in policy signatures")
+
+# Additional Debugging
+print('Final policy signatures:', policy_saver.signatures)
