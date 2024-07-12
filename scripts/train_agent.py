@@ -287,3 +287,6 @@ if 'action' in saved_policy.signatures:
     print(f"'action' method is in policy signatures: {saved_policy.signatures['action']}")
 else:
     print("'action' method is NOT in policy signatures")
+
+# Debugging: Print policy signatures after saving
+print('Policy signatures after saving:', policy_saver.policy.signatures)
