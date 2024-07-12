@@ -150,8 +150,14 @@ try:
                 print(f"Concrete function for 'action' method: {concrete_function}")
                 print(f"Concrete function input signature: {concrete_function.input_signature}")
                 print(f"Concrete function output signature: {concrete_function.output_shapes}")
+                print(f"Concrete function for 'action' method before saving: {concrete_function}")
+                print(f"Concrete function input signature before saving: {concrete_function.input_signature}")
+                print(f"Concrete function output signature before saving: {concrete_function.output_shapes}")
                 policy_saver.save(policy_dir, signatures={'serving_default': concrete_function})
                 print(f"Policy saved successfully in {policy_dir} at step {step}")
+                print(f"Contents of policy directory '{policy_dir}' after saving: {os.listdir(policy_dir)}")
+                saved_policy = tf.compat.v2.saved_model.load(policy_dir)
+                print(f"Attributes of saved policy object: {dir(saved_policy)}")
             except Exception as e:
                 print(f"Error saving policy at step {step}: {e}")
 
