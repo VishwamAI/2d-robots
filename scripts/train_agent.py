@@ -97,13 +97,11 @@ eval_interval = EVAL_INTERVAL
 time_step_spec = agent.policy.time_step_spec
 time_step_placeholder = tf.nest.map_structure(lambda spec: tf.TensorSpec(shape=[None] + list(spec.shape), dtype=spec.dtype), time_step_spec)
 
-# Initialize the PolicySaver with the correct input signature
+# Initialize the PolicySaver without the 'signatures' keyword argument
 concrete_action_fn = tf.function(agent.policy.action).get_concrete_function(time_step=time_step_placeholder)
 print(f"Concrete function for 'action' method: {concrete_action_fn}")
-print(f"Concrete function input signature: {concrete_action_fn.input_signature}")
-print(f"Concrete function output signature: {concrete_action_fn.output_shapes}")
-policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None, signatures={'serving_default': concrete_action_fn, 'action': concrete_action_fn})
-print(f"PolicySaver initialized with signatures: {policy_saver.signatures}")
+policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None, signatures={'serving_default': concrete_action_fn})
+print(f"PolicySaver initialized")
 
 # Ensure the 'action' method is a callable TensorFlow graph
 assert callable(agent.policy.action), "The 'action' method of the policy is not callable."
@@ -112,8 +110,7 @@ print(f"The 'action' method of the policy is a callable TensorFlow graph: {agent
 # Log the structure of the 'action' method
 concrete_function = tf.function(agent.policy.action).get_concrete_function(time_step=time_step_placeholder)
 print(f"Concrete function for 'action' method: {concrete_function}")
-print(f"Concrete function input signature: {concrete_function.input_signature}")
-print(f"Concrete function output signature: {concrete_function.output_shapes}")
+# Removed lines that attempt to access 'input_signature' and 'output_shapes' attributes
 
 # Training loop
 try:
@@ -167,8 +164,7 @@ try:
                     print(f"Error creating directory {policy_dir}: {e}")
             try:
                 print(f"Concrete function for 'action' method before saving: {concrete_action_fn}")
-                print(f"Concrete function input signature before saving: {concrete_action_fn.input_signature}")
-                print(f"Concrete function output signature before saving: {concrete_action_fn.output_shapes}")
+                # Removed lines that attempt to access 'input_signature' and 'output_shapes' attributes
                 print(f"Signatures of the policy before saving: {agent.policy.signatures}")
                 policy_saver.save(policy_dir)
                 print(f"Policy saved successfully in {policy_dir} at step {step}")
