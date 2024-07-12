@@ -104,7 +104,11 @@ try:
 
         # Sample a batch of data from the replay buffer and update the agent's network
         experience, _ = next(iterator)
-        train_loss = agent.train(experience).loss
+        with tf.GradientTape() as tape:
+            loss = agent._loss(experience)
+        gradients = tape.gradient(loss, agent._variables())
+        agent._optimizer.apply_gradients(zip(gradients, agent._variables()))
+        train_loss = loss
 
         step = agent.train_step_counter.numpy()
 
