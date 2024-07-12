@@ -146,7 +146,11 @@ try:
                 except Exception as e:
                     print(f"Error creating directory {policy_dir}: {e}")
             try:
-                policy_saver.save(policy_dir, signatures={'serving_default': tf.function(agent.policy.action).get_concrete_function(time_step=agent.policy.time_step_spec)})
+                concrete_function = tf.function(agent.policy.action).get_concrete_function(time_step=agent.policy.time_step_spec())
+                print(f"Concrete function for 'action' method: {concrete_function}")
+                print(f"Concrete function input signature: {concrete_function.input_signature}")
+                print(f"Concrete function output signature: {concrete_function.output_shapes}")
+                policy_saver.save(policy_dir, signatures={'serving_default': concrete_function})
                 print(f"Policy saved successfully in {policy_dir} at step {step}")
             except Exception as e:
                 print(f"Error saving policy at step {step}: {e}")
