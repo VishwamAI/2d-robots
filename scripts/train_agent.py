@@ -1,8 +1,6 @@
 import tensorflow as tf
-import tf_agents
 from tf_agents.environments import tf_py_environment
 from tf_agents.policies import random_tf_policy
-from tf_agents.trajectories import trajectory
 from tf_agents.utils import common
 from tf_agents.agents.dqn import dqn_agent
 from tf_agents.networks import q_network
@@ -14,8 +12,7 @@ from tf_agents.policies import policy_saver
 
 from environment import BirdRobotEnvironment
 from config import (
-    CONTROL_FREQUENCY, REWARD_COLLISION, REWARD_GOAL, REWARD_STEP, NUM_ITERATIONS,
-    COLLECT_STEPS_PER_ITERATION, LOG_INTERVAL, EVAL_INTERVAL, POLICY_DIR
+    NUM_ITERATIONS, COLLECT_STEPS_PER_ITERATION, LOG_INTERVAL, EVAL_INTERVAL, POLICY_DIR
 )
 import os
 
