@@ -52,8 +52,10 @@ for _ in range(num_episodes):
 
     while not time_step.is_last():
         try:
-            action_step = saved_policy.action(time_step)
-            time_step = eval_env.step(action_step.action)
+            # Use the 'action' method from the saved policy's signatures
+            action_fn = saved_policy.signatures['action']
+            action_step = action_fn(time_step)
+            time_step = eval_env.step(action_step['action'])
             episode_return += time_step.reward
         except AttributeError as e:
             print(f"AttributeError during policy execution: {e}")
