@@ -3,6 +3,12 @@ import numpy as np
 from tf_agents.environments import tf_py_environment
 from tf_agents.policies import policy_saver, SavedModelPyTFEagerPolicy
 from tf_agents.trajectories import time_step as ts
+import os
+import sys
+
+# Add the root directory to the Python path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from src.environment import BirdRobotEnvironment
 from config.config import POLICY_DIR
 
