@@ -136,6 +136,8 @@ else:
     print("The 'action' method is not present in the saved model signatures.")
     # Additional debugging: Print the available methods in the saved model
     print(f"Available methods in saved policy: {dir(saved_policy)}")
+# Additional debugging: Print the policy's signatures immediately after saving
+print(f"Policy signatures immediately after saving: {policy_saver.policy.signatures}")
 
 # Training loop
 try:
