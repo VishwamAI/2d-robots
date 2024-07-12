@@ -95,10 +95,10 @@ eval_interval = EVAL_INTERVAL
 
 # Create a placeholder TimeStep object using the spec provided by time_step_spec
 time_step_spec = agent.policy.time_step_spec
-time_step_placeholder = tf.nest.map_structure(lambda spec: tf.TensorSpec(shape=spec.shape, dtype=spec.dtype), time_step_spec)
+time_step_placeholder = tf.nest.map_structure(lambda spec: tf.TensorSpec(shape=[None] + list(spec.shape), dtype=spec.dtype), time_step_spec)
 
 # Initialize the PolicySaver with the correct input signature
-policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None, signatures={'serving_default': tf.function(agent.policy.action).get_concrete_function(time_step=time_step_placeholder)})
+policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None)
 
 # Ensure the 'action' method is a callable TensorFlow graph
 assert callable(agent.policy.action), "The 'action' method of the policy is not callable."
@@ -118,8 +118,14 @@ try:
 
         # Sample a batch of data from the replay buffer and update the agent's network
         experience, _ = next(iterator)
+        observations = experience.observation
+        print(f"Shape of observations: {tf.shape(observations)}")
+        batched_observations = tf.nest.map_structure(lambda x: tf.expand_dims(x, axis=0), observations)  # Add batch dimension
+        print(f"Observations shape: {observations.shape}\nBatched observations shape: {batched_observations.shape}")
+        print(f"Shape of batched observations: {tf.shape(batched_observations)}")
         with tf.GradientTape() as tape:
-            loss = agent._loss(experience)
+            loss = agent._loss(batched_observations)
+            print(f"Shape of input to QNetwork: {tf.shape(batched_observations)}")
         gradients = tape.gradient(loss, agent.trainable_variables)
         agent._optimizer.apply_gradients(zip(gradients, agent.trainable_variables))
         train_loss = loss
@@ -157,7 +163,7 @@ try:
                 print(f"Concrete function for 'action' method before saving: {concrete_function}")
                 print(f"Concrete function input signature before saving: {concrete_function.input_signature}")
                 print(f"Concrete function output signature before saving: {concrete_function.output_shapes}")
-                policy_saver.save(policy_dir, signatures={'serving_default': concrete_function})
+                policy_saver.save(policy_dir)
                 print(f"Policy saved successfully in {policy_dir} at step {step}")
                 print(f"Contents of policy directory '{policy_dir}' after saving: {os.listdir(policy_dir)}")
                 saved_policy = tf.compat.v2.saved_model.load(policy_dir)
@@ -171,7 +177,7 @@ try:
         os.makedirs(policy_dir)
 
     try:
-        policy_saver.save(policy_dir, signatures={'serving_default': tf.function(agent.policy.action).get_concrete_function(time_step=time_step_placeholder)})
+        policy_saver.save(policy_dir)
         print(f"Policy saved successfully in {policy_dir}")
         # Print the signatures of the saved model for debugging
         saved_model = tf.saved_model.load(policy_dir)
