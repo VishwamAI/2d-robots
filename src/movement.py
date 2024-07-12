@@ -18,7 +18,9 @@ class BirdRobotMovement:
         Updates the bird robot's position and orientation based on the control command.
 
         Args:
-            control_command (dict): A dictionary containing control commands with keys 'accelerate', 'decelerate', 'turn_right', 'turn_left', 'move_forward', 'move_backward'.
+            control_command (dict): A dictionary containing control commands with keys
+            'accelerate', 'decelerate', 'turn_right', 'turn_left', 'move_forward',
+            'move_backward'.
 
         Returns:
             np.ndarray: The new position of the bird robot [x, y].
