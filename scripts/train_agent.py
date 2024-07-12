@@ -125,9 +125,8 @@ print(f"Concrete function for 'action' method: {concrete_function}")
 policy_saver = policy_saver.PolicySaver(
     agent.policy, batch_size=None, signatures={"action": concrete_function}
 )
-print(
-    f"PolicySaver initialized with 'action' method included in signatures: {policy_saver.signatures}"
-)
+print(f"PolicySaver initialized with 'action' method included in signatures: {policy_saver.signatures}")
+print(f"Signatures before saving: {policy_saver.signatures}")
 
 # Ensure the 'action' method is a callable TensorFlow graph
 assert callable(
@@ -275,3 +274,5 @@ else:
 
 # Additional Debugging
 print('Final policy signatures:', policy_saver.signatures)
+print("Debugging - Signatures before saving:", policy_saver.signatures)
+print("Debugging - Signatures after saving:", saved_policy.signatures)
