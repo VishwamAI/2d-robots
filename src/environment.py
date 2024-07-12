@@ -157,10 +157,10 @@ class BirdRobotEnvironment(py_environment.PyEnvironment):
             self._state[6 + i * 3] = obstacle[0]
             self._state[7 + i * 3] = obstacle[1]
             distance = np.linalg.norm(self._state[:2] - obstacle)
-            angle = (
-                np.arctan2(obstacle[1] - self._state[1], obstacle[0] - self._state[0])
-                - np.deg2rad(self._state[2])
+            angle_to_obstacle = np.arctan2(
+                obstacle[1] - self._state[1], obstacle[0] - self._state[0]
             )
+            angle = angle_to_obstacle - np.deg2rad(self._state[2])
             if (
                 distance <= SENSOR_RANGE
                 and np.abs(np.rad2deg(angle)) <= SENSOR_ANGLE / 2
@@ -186,7 +186,8 @@ class BirdRobotEnvironment(py_environment.PyEnvironment):
                 )
 
         # Check if the goal is reached
-        if np.linalg.norm(self._state[:2] - self._state[4:6]) < COLLISION_DISTANCE:
+        goal_distance = np.linalg.norm(self._state[:2] - self._state[4:6])
+        if goal_distance < COLLISION_DISTANCE:
             self._episode_ended = True
             return ts.termination(
                 self._get_observation(), reward=REWARD_GOAL
