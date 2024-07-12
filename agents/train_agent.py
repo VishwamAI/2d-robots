@@ -145,6 +145,6 @@ policy_dir = './policy'
 tf_policy_saver = policy_saver.PolicySaver(
     agent.policy,
     batch_size=None,
-    use_nest_path_signatures=False
+    use_nest_path_signatures=True
 )
 tf_policy_saver.save(policy_dir)
