@@ -22,6 +22,9 @@ if not os.path.exists(policy_dir):
         "Please ensure the model is trained and saved correctly."
     )
 
+# Debugging: List contents of policy_dir
+print(f"Contents of policy_dir ({policy_dir}): {os.listdir(policy_dir)}")
+
 try:
     policy = py_tf_eager_policy.SavedModelPyTFEagerPolicy(
         policy_dir, time_step_spec=eval_env.time_step_spec()
