@@ -1,13 +1,13 @@
 import os
 import sys
 
-# Append the src directory to the Python path
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))  # noqa: E402
-
 from tf_agents.environments import tf_py_environment
 from tf_agents.policies import py_tf_eager_policy
 from src.environment import BirdRobotEnvironment
 from config.config import POLICY_DIR
+
+# Append the src directory to the Python path
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))  # noqa: E402
 
 # Create the environment
 eval_py_env = BirdRobotEnvironment()
@@ -21,35 +21,18 @@ if not os.path.exists(policy_dir):
         "Please ensure the model is trained and saved correctly."
     )
 
-# Debugging: List contents of policy_dir
-print(f"Contents of policy_dir ({policy_dir}): {os.listdir(policy_dir)}")
-
-# Debugging: Print the POLICY_DIR value
-print(f"POLICY_DIR: {POLICY_DIR}")
-
-# Debugging: List contents of the saved model directory
-for root, dirs, files in os.walk(policy_dir):
-    print(f"Directory: {root}")
-    print(f"Subdirectories: {dirs}")
-    print(f"Files: {files}")
-
 try:
     policy = py_tf_eager_policy.SavedModelPyTFEagerPolicy(
         policy_dir,
         time_step_spec=eval_env.time_step_spec(),
         action_spec=eval_env.action_spec()
     )
-    # Debugging: Print the loaded policy object
-    print(f"Loaded policy: {policy}")
-    # Debugging: Check if the 'action' method exists
     if hasattr(policy, 'action'):
         print("The loaded policy has an 'action' method.")
     else:
         print("The loaded policy does NOT have an 'action' method.")
-        # Debugging: Print the available attributes of the policy object
         print(f"Available attributes of the policy object: {dir(policy)}")
 except Exception as e:
-    # Debugging: Print the exception details
     print(f"Exception details: {e}")
     raise RuntimeError(
         f"Error loading policy from '{policy_dir}': {e}"
