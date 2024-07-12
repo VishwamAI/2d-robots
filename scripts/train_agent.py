@@ -173,6 +173,9 @@ try:
     try:
         policy_saver.save(policy_dir, signatures={'serving_default': tf.function(agent.policy.action).get_concrete_function(time_step=time_step_placeholder)})
         print(f"Policy saved successfully in {policy_dir}")
+        # Print the signatures of the saved model for debugging
+        saved_model = tf.saved_model.load(policy_dir)
+        print(f"Signatures of the saved model: {saved_model.signatures}")
     except Exception as e:
         print(f"Error saving policy: {e}")
 except Exception as e:
