@@ -166,11 +166,17 @@ try:
                 print(f"Concrete function for 'action' method before saving: {concrete_action_fn}")
                 print(f"Concrete function input signature before saving: {concrete_action_fn.input_signature}")
                 print(f"Concrete function output signature before saving: {concrete_action_fn.output_shapes}")
+                print(f"Signatures of the policy before saving: {agent.policy.signatures}")
                 policy_saver.save(policy_dir)
                 print(f"Policy saved successfully in {policy_dir} at step {step}")
                 print(f"Contents of policy directory '{policy_dir}' after saving: {os.listdir(policy_dir)}")
                 saved_policy = tf.compat.v2.saved_model.load(policy_dir)
                 print(f"Attributes of saved policy object: {dir(saved_policy)}")
+                print(f"Signatures of the loaded policy: {saved_policy.signatures}")
+                if 'action' in saved_policy.signatures:
+                    print(f"'action' method signature: {saved_policy.signatures['action']}")
+                else:
+                    print("The 'action' method is not present in the saved policy signatures.")
             except Exception as e:
                 print(f"Error saving policy at step {step}: {e}")
 

@@ -41,6 +41,12 @@ try:
         raise AttributeError("Loaded policy object does not have an 'action' method.")
     # Debugging: Print the signatures of the loaded policy
     print(f"Signatures of loaded policy: {saved_policy.signatures}")
+    # Debugging: Print the structure of the 'action' method signature
+    if 'action' in saved_policy.signatures:
+        action_signature = saved_policy.signatures['action']
+        print(f"'action' method signature: {action_signature}")
+        print(f"'action' method input signature: {action_signature.input_signature}")
+        print(f"'action' method output signature: {action_signature.output_shapes}")
     # Create a policy object using the loaded policy's 'action' signature
     policy = py_tf_eager_policy.SavedModelPyTFEagerPolicy(saved_policy, time_step_spec=eval_env.time_step_spec())
 except Exception as e:
