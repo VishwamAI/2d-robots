@@ -109,7 +109,6 @@ time_step_placeholder = tf.nest.map_structure(
     time_step_spec,
 )
 
-# Initialize the PolicySaver correctly
 # Register the 'action' method as a concrete function
 concrete_function = tf.function(agent.policy.action).get_concrete_function(
     time_step=time_step_placeholder
@@ -126,13 +125,9 @@ print(
     f"The 'action' method of the policy is a callable TensorFlow graph: {agent.policy.action}"
 )
 
-# Register the 'action' method as a concrete function
-concrete_function = tf.function(agent.policy.action).get_concrete_function(
-    time_step=time_step_placeholder
-)
-agent.policy._action_function = concrete_function
-tf.saved_model.save(agent.policy, POLICY_DIR, signatures={'action': concrete_function})
-print(f"Concrete function for 'action' method: {concrete_function}")
+# Save the policy using PolicySaver
+policy_saver.save(POLICY_DIR)
+print(f"Policy saved successfully in {POLICY_DIR}")
 saved_policy = tf.compat.v2.saved_model.load(POLICY_DIR)
 print(f"Signatures of the saved model: {saved_policy.signatures}")
 if "action" in saved_policy.signatures:

@@ -43,6 +43,8 @@ try:
         print(f"'action' method is in policy signatures: {saved_policy.signatures['action']}")
     else:
         print("'action' method is NOT in policy signatures")
+        # Additional debugging: Print the available methods in the saved model
+        print(f"Available methods in saved policy: {dir(saved_policy)}")
 except Exception as e:
     raise RuntimeError(f"Error loading policy from '{policy_dir}': {e}")
 
@@ -72,3 +74,9 @@ for _ in range(num_episodes):
             raise
 
     print("Episode return: {}".format(episode_return))
+
+# Debugging: Print the signatures of the loaded policy
+def print_policy_signatures(policy):
+    print('Policy signatures:', policy.signatures)
+
+print_policy_signatures(saved_policy)
