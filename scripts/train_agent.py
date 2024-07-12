@@ -131,7 +131,7 @@ try:
             # Ensure the input to the QNetwork has the correct shape
             q_values, _ = q_net(batched_observations, training=True)
             # Use batched observations for loss calculation
-            loss = agent._loss(batched_observations)
+            loss = agent._loss(experience)
             print(f"Shape of input to QNetwork: {tf.shape(batched_observations)}")
         gradients = tape.gradient(loss, agent.trainable_variables)
         agent._optimizer.apply_gradients(zip(gradients, agent.trainable_variables))
