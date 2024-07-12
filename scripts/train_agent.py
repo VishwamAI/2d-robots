@@ -94,7 +94,7 @@ log_interval = LOG_INTERVAL
 eval_interval = EVAL_INTERVAL
 
 # Initialize the PolicySaver
-policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None, signatures={'action': agent.policy.action.get_concrete_function()})
+policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None, signatures={'action': tf.function(agent.policy.action).get_concrete_function()})
 
 # Training loop
 try:
@@ -136,7 +136,7 @@ try:
                 except Exception as e:
                     print(f"Error creating directory {policy_dir}: {e}")
             try:
-                policy_saver.save(policy_dir, signatures={'action': agent.policy.action.get_concrete_function()})
+                policy_saver.save(policy_dir, signatures={'action': tf.function(agent.policy.action).get_concrete_function()})
                 print(f"Policy saved successfully in {policy_dir} at step {step}")
             except Exception as e:
                 print(f"Error saving policy at step {step}: {e}")
@@ -147,7 +147,7 @@ try:
         os.makedirs(policy_dir)
 
     try:
-        policy_saver.save(policy_dir, signatures={'action': agent.policy.action.get_concrete_function()})
+        policy_saver.save(policy_dir, signatures={'action': tf.function(agent.policy.action).get_concrete_function()})
         print(f"Policy saved successfully in {policy_dir}")
     except Exception as e:
         print(f"Error saving policy: {e}")
