@@ -39,9 +39,9 @@ try:
     print(f"Contents of policy directory '{policy_dir}': {os.listdir(policy_dir)}")
     print(f"Loaded policy object: {saved_policy}")
     print(f"Attributes of loaded policy object: {dir(saved_policy)}")
-    # Create a policy object using the loaded policy
+    # Create a policy object using the path to the saved model directory
     policy = py_tf_eager_policy.SavedModelPyTFEagerPolicy(
-        saved_policy, time_step_spec=eval_env.time_step_spec()
+        policy_dir, time_step_spec=eval_env.time_step_spec()
     )
 except Exception as e:
     raise RuntimeError(f"Error loading policy from '{policy_dir}': {e}")
