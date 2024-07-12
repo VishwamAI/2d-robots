@@ -1,15 +1,9 @@
 import sys
 import os
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 import tensorflow as tf
 import tf_agents
-
-print("TF-Agents version:", tf_agents.__version__)
 from tf_agents.environments import tf_py_environment
 from tf_agents.policies import random_tf_policy
-from tf_agents.trajectories import trajectory
 from tf_agents.utils import common
 from tf_agents.agents.dqn import dqn_agent
 from tf_agents.networks import q_network
@@ -18,23 +12,17 @@ from tf_agents.drivers import dynamic_step_driver
 from tf_agents.metrics import tf_metrics
 from tf_agents.eval import metric_utils
 from tf_agents.policies import policy_saver
-
 from src.environment import BirdRobotEnvironment
 from config.config import (
-    CONTROL_FREQUENCY,
-    REWARD_COLLISION,
-    REWARD_GOAL,
-    REWARD_STEP,
     NUM_ITERATIONS,
     COLLECT_STEPS_PER_ITERATION,
     LOG_INTERVAL,
     EVAL_INTERVAL,
     POLICY_DIR,
 )
-import os
 
-POLICY_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'policy')
-
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+print("TF-Agents version:", tf_agents.__version__)
 print(f"POLICY_DIR is set to: {POLICY_DIR}")
 
 # Set up the environment
@@ -207,6 +195,7 @@ try:
                 )
                 policy_saver.save(policy_dir)
                 print(f"Policy saved successfully in {policy_dir} at step {step}")
+                saved_policy = tf.compat.v2.saved_model.load(policy_dir)
                 print(f"Signatures of the saved model: {saved_policy.signatures}")
                 if "action" in saved_policy.signatures:
                     print(f"'action' method signature: {saved_policy.signatures['action']}")
@@ -217,7 +206,6 @@ try:
                 print(
                     f"Contents of policy directory '{policy_dir}' after saving: {os.listdir(policy_dir)}"
                 )
-                saved_policy = tf.compat.v2.saved_model.load(policy_dir)
                 # Debugging: Print the saved model object after loading
                 print(f"Saved model object after loading: {saved_policy}")
                 print(f"Attributes of saved policy object: {dir(saved_policy)}")
@@ -273,10 +261,3 @@ else:
 
 # Additional Debugging
 print("Debugging - Signatures after saving:", saved_policy.signatures)
-
-# Debugging: Confirm 'action' method in policy signatures
-saved_policy = tf.compat.v2.saved_model.load(policy_dir)
-if 'action' in saved_policy.signatures:
-    print(f"'action' method is in policy signatures: {saved_policy.signatures['action']}")
-else:
-    print("'action' method is NOT in policy signatures")
