@@ -57,10 +57,12 @@ class BirdRobotControl:
             np.ndarray: The new position of the bird robot [x, y].
         """
         position[0] += (
-            self.velocity * np.cos(np.deg2rad(self.orientation)) * SIMULATION_TIME_STEP
+            self.velocity * np.cos(np.deg2rad(self.orientation))
+            * SIMULATION_TIME_STEP
         )
         position[1] += (
-            self.velocity * np.sin(np.deg2rad(self.orientation)) * SIMULATION_TIME_STEP
+            self.velocity * np.sin(np.deg2rad(self.orientation))
+            * SIMULATION_TIME_STEP
         )
         return position
 
@@ -75,9 +77,11 @@ class BirdRobotControl:
             np.ndarray: The new position of the bird robot [x, y].
         """
         position[0] -= (
-            self.velocity * np.cos(np.deg2rad(self.orientation)) * SIMULATION_TIME_STEP
+            self.velocity * np.cos(np.deg2rad(self.orientation))
+            * SIMULATION_TIME_STEP
         )
         position[1] -= (
-            self.velocity * np.sin(np.deg2rad(self.orientation)) * SIMULATION_TIME_STEP
+            self.velocity * np.sin(np.deg2rad(self.orientation))
+            * SIMULATION_TIME_STEP
         )
         return position
