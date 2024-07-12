@@ -33,6 +33,8 @@ from config.config import (
 )
 import os
 
+POLICY_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'policy')
+
 print(f"POLICY_DIR is set to: {POLICY_DIR}")
 
 # Set up the environment
