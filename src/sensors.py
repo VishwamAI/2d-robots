@@ -18,7 +18,8 @@ class BirdRobotSensors:
         Detects obstacles within the sensor range and angle.
 
         Args:
-            position (np.ndarray): The current position of the bird robot [x, y].
+            position (np.ndarray): The current position of the bird robot
+            [x, y].
             orientation (float): The current orientation of the bird robot in
             degrees.
 
@@ -48,7 +49,8 @@ class BirdRobotSensors:
         orientation, and detected obstacles.
 
         Args:
-            position (np.ndarray): The current position of the bird robot [x, y].
+            position (np.ndarray): The current position of the bird robot
+            [x, y].
             orientation (float): The current orientation of the bird robot in
             degrees.
 
