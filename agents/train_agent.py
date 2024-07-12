@@ -144,7 +144,8 @@ for _ in range(num_iterations):
 policy_dir = './policy'
 
 # Register the 'action' method as a concrete function
-agent.policy.action = common.function(agent.policy.action)
+agent.policy.action = tf.function(agent.policy.action)
+print(f"Registered 'action' method as a concrete function: {agent.policy.action}")
 
 tf_policy_saver = policy_saver.PolicySaver(
     agent.policy,
