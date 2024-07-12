@@ -113,7 +113,7 @@ concrete_function = tf.function(agent.policy.action).get_concrete_function(
     time_step=time_step_placeholder
 )
 agent.policy._action_function = concrete_function
-policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None, signatures={'action': concrete_function})
+policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None)
 print(f"Concrete function for 'action' method: {concrete_function}")
 
 # Ensure the 'action' method is a callable TensorFlow graph
