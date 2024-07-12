@@ -32,10 +32,18 @@ class BirdRobotMovement:
         if control_command.get('turn_left'):
             self.orientation = (self.orientation - TURN_RATE) % 360
         if control_command.get('move_forward'):
-            self.position[0] += self.velocity * np.cos(np.deg2rad(self.orientation)) * SIMULATION_TIME_STEP
-            self.position[1] += self.velocity * np.sin(np.deg2rad(self.orientation)) * SIMULATION_TIME_STEP
+            self.position[0] += (
+                self.velocity * np.cos(np.deg2rad(self.orientation)) * SIMULATION_TIME_STEP
+            )
+            self.position[1] += (
+                self.velocity * np.sin(np.deg2rad(self.orientation)) * SIMULATION_TIME_STEP
+            )
         if control_command.get('move_backward'):
-            self.position[0] -= self.velocity * np.cos(np.deg2rad(self.orientation)) * SIMULATION_TIME_STEP
-            self.position[1] -= self.velocity * np.sin(np.deg2rad(self.orientation)) * SIMULATION_TIME_STEP
+            self.position[0] -= (
+                self.velocity * np.cos(np.deg2rad(self.orientation)) * SIMULATION_TIME_STEP
+            )
+            self.position[1] -= (
+                self.velocity * np.sin(np.deg2rad(self.orientation)) * SIMULATION_TIME_STEP
+            )
 
         return self.position
