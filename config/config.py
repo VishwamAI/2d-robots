@@ -1,3 +1,5 @@
+import os
+
 # Configuration parameters for the 2D Bird Robots Project
 
 # Movement parameters
@@ -38,5 +40,6 @@ LOG_INTERVAL = 200  # Interval for logging training progress
 EVAL_INTERVAL = 1000  # Interval for evaluating the agent's performance
 
 # Policy directory
-import os
-POLICY_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'policy')  # Directory to save the trained policy
+POLICY_DIR = os.path.join(
+    os.path.dirname(os.path.dirname(__file__)), 'policy'
+)  # Directory to save the trained policy
