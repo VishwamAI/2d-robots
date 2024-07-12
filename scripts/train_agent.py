@@ -100,7 +100,8 @@ try:
         # Collect a few steps and save to the replay buffer
         collect_driver.run()
 
-        # Sample a batch of data from the replay buffer and update the agent's network
+        # Sample a batch of data from the replay buffer and update the agent's
+        # network
         experience, _ = next(iterator)
         train_loss = agent.train(experience).loss
 
