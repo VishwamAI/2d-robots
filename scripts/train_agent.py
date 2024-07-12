@@ -118,7 +118,6 @@ time_step_placeholder = tf.nest.map_structure(
 )
 
 policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None)
-print(f"PolicySaver initialized with 'action' method registered: {policy_saver.signatures}")
 
 # Ensure the 'action' method is a callable TensorFlow graph
 assert callable(
@@ -257,14 +256,11 @@ except Exception as e:
     print(f"An unexpected error occurred during training: {e}")
 
 # Debugging: Confirm 'action' method in policy signatures
-if "action" in agent.policy.signatures:
-    print(
-        f"'action' method is in policy signatures: {agent.policy.signatures['action']}"
-    )
+saved_policy = tf.compat.v2.saved_model.load(policy_dir)
+if "action" in saved_policy.signatures:
+    print(f"'action' method is in policy signatures: {saved_policy.signatures['action']}")
 else:
     print("'action' method is NOT in policy signatures")
 
 # Additional Debugging
-print('Final policy signatures:', policy_saver.signatures)
-print("Debugging - Signatures before saving:", policy_saver.signatures)
 print("Debugging - Signatures after saving:", saved_policy.signatures)
