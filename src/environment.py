@@ -53,18 +53,30 @@ class BirdRobotEnvironment(py_environment.PyEnvironment):
         and sets up the initial state and obstacles.
         """
         self._action_spec = array_spec.BoundedArraySpec(
-            shape=(), dtype=np.int32, minimum=self.ACTION_ACCELERATE,
-            maximum=self.ACTION_MOVE_BACKWARD, name='action'
+            shape=(),
+            dtype=np.int32,
+            minimum=self.ACTION_ACCELERATE,
+            maximum=self.ACTION_MOVE_BACKWARD,
+            name='action'
         )
-        self._obstacles = [np.array([20, 20]), np.array([40, 40]), np.array([60, 60])]  # Example obstacles
+        self._obstacles = [
+            np.array([20, 20]),
+            np.array([40, 40]),
+            np.array([60, 60])
+        ]  # Example obstacles
         num_obstacles = len(self._obstacles)
         self._observation_spec = array_spec.BoundedArraySpec(
-            shape=(6 + num_obstacles * 3,), dtype=np.float32,
-            minimum=BOUNDARY_MIN, maximum=BOUNDARY_MAX, name='observation'
+            shape=(6 + num_obstacles * 3,),
+            dtype=np.float32,
+            minimum=BOUNDARY_MIN,
+            maximum=BOUNDARY_MAX,
+            name='observation'
         )
 
         # State array structure: [x, y, orientation, velocity, goal_x, goal_y, obstacle_x1, obstacle_y1, distance1, ...]
-        self._state = np.zeros(6 + num_obstacles * 3, dtype=np.float32)  # Initialize state array
+        self._state = np.zeros(
+            6 + num_obstacles * 3, dtype=np.float32
+        )  # Initialize state array
         self._episode_ended = False
 
     def action_spec(self):
@@ -78,7 +90,9 @@ class BirdRobotEnvironment(py_environment.PyEnvironment):
         Resets the environment to its initial state at the start of a new episode.
         """
         num_obstacles = len(self._obstacles)
-        self._state = np.zeros(6 + num_obstacles * 3, dtype=np.float32)  # Reset to initial position and goal
+        self._state = np.zeros(
+            6 + num_obstacles * 3, dtype=np.float32
+        )  # Reset to initial position and goal
         self._state[:2] = [
             BOUNDARY_MIN + BOUNDARY_OFFSET, BOUNDARY_MIN + BOUNDARY_OFFSET
         ]  # Set initial position (x, y)
@@ -127,21 +141,21 @@ class BirdRobotEnvironment(py_environment.PyEnvironment):
             self._state[2] = (self._state[2] - TURN_RATE) % 360  # Turn left
         elif action == self.ACTION_MOVE_FORWARD:
             self._state[0] += (
-                self._state[3] * np.cos(np.deg2rad(self._state[2])) *
-                SIMULATION_TIME_STEP
+                self._state[3] * np.cos(np.deg2rad(self._state[2]))
+                * SIMULATION_TIME_STEP
             )  # Move forward
             self._state[1] += (
-                self._state[3] * np.sin(np.deg2rad(self._state[2])) *
-                SIMULATION_TIME_STEP
+                self._state[3] * np.sin(np.deg2rad(self._state[2]))
+                * SIMULATION_TIME_STEP
             )  # Move forward
         elif action == self.ACTION_MOVE_BACKWARD:
             self._state[0] -= (
-                self._state[3] * np.cos(np.deg2rad(self._state[2])) *
-                SIMULATION_TIME_STEP
+                self._state[3] * np.cos(np.deg2rad(self._state[2]))
+                * SIMULATION_TIME_STEP
             )  # Move backward
             self._state[1] -= (
-                self._state[3] * np.sin(np.deg2rad(self._state[2])) *
-                SIMULATION_TIME_STEP
+                self._state[3] * np.sin(np.deg2rad(self._state[2]))
+                * SIMULATION_TIME_STEP
             )  # Move backward
 
         # Ensure the orientation stays within 0 to 360 degrees
@@ -159,7 +173,10 @@ class BirdRobotEnvironment(py_environment.PyEnvironment):
                 np.arctan2(obstacle[1] - self._state[1], obstacle[0] - self._state[0])
                 - np.deg2rad(self._state[2])
             )
-            if distance <= SENSOR_RANGE and np.abs(np.rad2deg(angle)) <= SENSOR_ANGLE / 2:
+            if (
+                distance <= SENSOR_RANGE
+                and np.abs(np.rad2deg(angle)) <= SENSOR_ANGLE / 2
+            ):
                 self._state[8 + i * 3] = distance
             else:
                 self._state[8 + i * 3] = SENSOR_RANGE

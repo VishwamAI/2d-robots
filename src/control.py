@@ -3,9 +3,9 @@ from config import (
     MAX_SPEED,
     ACCELERATION,
     TURN_RATE,
-    CONTROL_FREQUENCY,
     SIMULATION_TIME_STEP,
 )
+
 
 class BirdRobotControl:
     """
