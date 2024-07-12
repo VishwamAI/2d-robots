@@ -94,7 +94,7 @@ log_interval = LOG_INTERVAL
 eval_interval = EVAL_INTERVAL
 
 # Initialize the PolicySaver
-policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None, signatures={'serving_default': tf.function(agent.policy.action).get_concrete_function(time_step=agent.policy.time_step_spec)})
+policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None, signatures={'serving_default': tf.function(agent.policy.action).get_concrete_function(time_step=agent.policy.time_step_spec())})
 
 # Ensure the 'action' method is a callable TensorFlow graph
 assert callable(agent.policy.action), "The 'action' method of the policy is not callable."
@@ -161,7 +161,7 @@ try:
         os.makedirs(policy_dir)
 
     try:
-        policy_saver.save(policy_dir, signatures={'serving_default': tf.function(agent.policy.action).get_concrete_function(time_step=agent.policy.time_step_spec)})
+        policy_saver.save(policy_dir, signatures={'serving_default': tf.function(agent.policy.action).get_concrete_function(time_step=agent.policy.time_step_spec())})
         print(f"Policy saved successfully in {policy_dir}")
     except Exception as e:
         print(f"Error saving policy: {e}")
