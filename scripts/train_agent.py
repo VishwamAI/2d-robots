@@ -123,7 +123,7 @@ concrete_function = agent.policy.action.get_concrete_function(
 )
 print(f"Concrete function for 'action' method: {concrete_function}")
 policy_saver = policy_saver.PolicySaver(
-    agent.policy, batch_size=None, signatures={"serving_default": concrete_function}
+    agent.policy, batch_size=None, signatures={"action": concrete_function}
 )
 print(
     f"PolicySaver initialized with 'action' method included in signatures: {policy_saver.signatures}"
