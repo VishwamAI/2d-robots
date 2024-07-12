@@ -188,6 +188,13 @@ try:
         # Print the signatures of the saved model for debugging
         saved_model = tf.saved_model.load(policy_dir)
         print(f"Signatures of the saved model: {saved_model.signatures}")
+        # Debugging: Print the attributes of the saved model
+        print(f"Attributes of the saved model: {dir(saved_model)}")
+        # Debugging: Print the 'action' method of the saved model
+        if 'action' in saved_model.signatures:
+            print(f"'action' method signature: {saved_model.signatures['action']}")
+        else:
+            print("The 'action' method is not present in the saved model signatures.")
     except Exception as e:
         print(f"Error saving policy: {e}")
 except Exception as e:
