@@ -25,7 +25,6 @@ jobs:
     - name: Lint with flake8
       run: |
         source venv/bin/activate
-        pip install flake8
         flake8 --config=.flake8 .
 
     - name: Run tests
