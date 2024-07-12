@@ -1,6 +1,5 @@
 import tensorflow as tf
 from tf_agents.environments import tf_py_environment
-from tf_agents.policies import py_tf_eager_policy
 from tf_agents.trajectories import time_step as ts
 import numpy as np
 import os
@@ -39,10 +38,6 @@ try:
     print(f"Contents of policy directory '{policy_dir}': {os.listdir(policy_dir)}")
     print(f"Loaded policy object: {saved_policy}")
     print(f"Attributes of loaded policy object: {dir(saved_policy)}")
-    # Create a policy object using the path to the saved model directory
-    policy = py_tf_eager_policy.SavedModelPyTFEagerPolicy(
-        policy_dir, time_step_spec=eval_env.time_step_spec()
-    )
 except Exception as e:
     raise RuntimeError(f"Error loading policy from '{policy_dir}': {e}")
 
@@ -57,12 +52,12 @@ for _ in range(num_episodes):
 
     while not time_step.is_last():
         try:
-            action_step = policy.action(time_step)
+            action_step = saved_policy.action(time_step)
             time_step = eval_env.step(action_step.action)
             episode_return += time_step.reward
         except AttributeError as e:
             print(f"AttributeError during policy execution: {e}")
-            print(f"Attributes of policy object: {dir(policy)}")
+            print(f"Attributes of policy object: {dir(saved_policy)}")
             raise
 
     print("Episode return: {}".format(episode_return))
