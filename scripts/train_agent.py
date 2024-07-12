@@ -13,7 +13,10 @@ from tf_agents.eval import metric_utils
 from tf_agents.policies import policy_saver
 
 from environment import BirdRobotEnvironment
-from config import CONTROL_FREQUENCY, REWARD_COLLISION, REWARD_GOAL, REWARD_STEP, NUM_ITERATIONS, COLLECT_STEPS_PER_ITERATION, LOG_INTERVAL, EVAL_INTERVAL, POLICY_DIR
+from config import (
+    CONTROL_FREQUENCY, REWARD_COLLISION, REWARD_GOAL, REWARD_STEP, NUM_ITERATIONS,
+    COLLECT_STEPS_PER_ITERATION, LOG_INTERVAL, EVAL_INTERVAL, POLICY_DIR
+)
 import os
 
 print(f"POLICY_DIR is set to: {POLICY_DIR}")
@@ -119,29 +122,47 @@ try:
         # Attempt to save the policy more frequently for debugging purposes
         if step % (eval_interval // 10) == 0:
             policy_dir = POLICY_DIR
-            print(f"Attempting to save policy at step {step} in directory {policy_dir}")
+            print(
+                f"Attempting to save policy at step {step} in directory {policy_dir}"
+            )
             if not os.path.exists(policy_dir):
                 try:
                     os.makedirs(policy_dir)
-                    print(f"Directory {policy_dir} created successfully.")
+                    print(
+                        f"Directory {policy_dir} created successfully."
+                    )
                 except Exception as e:
-                    print(f"Error creating directory {policy_dir}: {e}")
+                    print(
+                        f"Error creating directory {policy_dir}: {e}"
+                    )
             try:
                 policy_saver.save(policy_dir)
-                print(f"Policy saved successfully in {policy_dir} at step {step}")
+                print(
+                    f"Policy saved successfully in {policy_dir} at step {step}"
+                )
             except Exception as e:
-                print(f"Error saving policy at step {step}: {e}")
+                print(
+                    f"Error saving policy at step {step}: {e}"
+                )
 
     # Final save of the trained policy
     policy_dir = POLICY_DIR
-    print(f"Attempting final save of policy in directory {policy_dir}")
+    print(
+        f"Attempting final save of policy in directory {policy_dir}"
+    )
     if not os.path.exists(policy_dir):
         os.makedirs(policy_dir)
 
     try:
         policy_saver.save(policy_dir)
-        print(f"Policy saved successfully in {policy_dir}")
+        print(
+            f"Policy saved successfully in {policy_dir}"
+        )
     except Exception as e:
-        print(f"Error saving policy: {e}")
+        print(
+            f"Error saving policy: {e}"
+        )
 except Exception as e:
-    print(f"An unexpected error occurred during training: {e}")
+    print(
+        f"An unexpected error occurred during training: {e}"
+    )
