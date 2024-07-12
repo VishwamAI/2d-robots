@@ -1,4 +1,4 @@
-import sys
+from src.environment import BirdRobotEnvironment
 import os
 import tensorflow as tf
 import tf_agents
