@@ -112,17 +112,21 @@ class BirdRobotEnvironment(py_environment.PyEnvironment):
             self._state[2] = (self._state[2] - TURN_RATE) % 360  # Turn left
         elif action == self.ACTION_MOVE_FORWARD:
             self._state[0] += (
-                self._state[3] * np.cos(np.deg2rad(self._state[2])) * SIMULATION_TIME_STEP
+                self._state[3] * np.cos(np.deg2rad(self._state[2])) *
+                SIMULATION_TIME_STEP
             )  # Move forward
             self._state[1] += (
-                self._state[3] * np.sin(np.deg2rad(self._state[2])) * SIMULATION_TIME_STEP
+                self._state[3] * np.sin(np.deg2rad(self._state[2])) *
+                SIMULATION_TIME_STEP
             )  # Move forward
         elif action == self.ACTION_MOVE_BACKWARD:
             self._state[0] -= (
-                self._state[3] * np.cos(np.deg2rad(self._state[2])) * SIMULATION_TIME_STEP
+                self._state[3] * np.cos(np.deg2rad(self._state[2])) *
+                SIMULATION_TIME_STEP
             )  # Move backward
             self._state[1] -= (
-                self._state[3] * np.sin(np.deg2rad(self._state[2])) * SIMULATION_TIME_STEP
+                self._state[3] * np.sin(np.deg2rad(self._state[2])) *
+                SIMULATION_TIME_STEP
             )  # Move backward
 
         # Ensure the orientation stays within 0 to 360 degrees
@@ -165,7 +169,9 @@ class BirdRobotEnvironment(py_environment.PyEnvironment):
         if self._episode_ended:
             return ts.termination(self._get_observation(), reward=0.0)
         else:
-            return ts.transition(self._get_observation(), reward=REWARD_STEP, discount=0.9)
+            return ts.transition(
+                self._get_observation(), reward=REWARD_STEP, discount=0.9
+            )
 
     def _get_observation(self):
         """
