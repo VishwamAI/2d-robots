@@ -38,7 +38,7 @@ try:
     # Debugging: Print the signatures of the loaded policy
     print(f"Signatures of loaded policy: {saved_policy.signatures}")
     # Create a policy object using the loaded policy's 'action' signature
-    action_fn = saved_policy.signatures['action']
+    policy = py_tf_eager_policy.SavedModelPyTFEagerPolicy(saved_policy, time_step_spec=eval_env.time_step_spec())
 except Exception as e:
     raise RuntimeError(f"Error loading policy from '{policy_dir}': {e}")
 
@@ -58,7 +58,7 @@ for _ in range(num_episodes):
 
     while not time_step.is_last():
         try:
-            action_step = action_fn(time_step)
+            action_step = policy.action(time_step)
             time_step = eval_env.step(action_step.action)
             episode_return += time_step.reward
         except AttributeError as e:
