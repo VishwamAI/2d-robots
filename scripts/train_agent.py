@@ -131,6 +131,14 @@ concrete_function = tf.function(agent.policy.action).get_concrete_function(
 agent.policy._action_function = concrete_function
 tf.saved_model.save(agent.policy, POLICY_DIR, signatures={'action': concrete_function})
 print(f"Concrete function for 'action' method: {concrete_function}")
+saved_policy = tf.compat.v2.saved_model.load(POLICY_DIR)
+print(f"Signatures of the saved model: {saved_policy.signatures}")
+if "action" in saved_policy.signatures:
+    print(f"'action' method signature: {saved_policy.signatures['action']}")
+else:
+    print("The 'action' method is not present in the saved model signatures.")
+    # Additional debugging: Print the available methods in the saved model
+    print(f"Available methods in saved policy: {dir(saved_policy)}")
 
 # Training loop
 try:
