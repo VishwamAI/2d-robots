@@ -47,6 +47,9 @@ print(f"Contents of policy directory '{policy_dir}': {os.listdir(policy_dir)}")
 print(f"Loaded policy object: {saved_policy}")
 print(f"Attributes of loaded policy object: {dir(saved_policy)}")
 
+# Print TensorFlow version for debugging
+print("TensorFlow version:", tf.__version__)
+
 # Run a few episodes and print the results
 num_episodes = 10
 for _ in range(num_episodes):
