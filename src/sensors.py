@@ -1,6 +1,7 @@
 import numpy as np
 from config import SENSOR_RANGE, SENSOR_ANGLE
 
+
 class BirdRobotSensors:
     """
     Sensor system for the 2D bird robot.
@@ -25,8 +26,13 @@ class BirdRobotSensors:
         distances = []
         for obstacle in self.obstacles:
             distance = np.linalg.norm(position - obstacle)
-            angle = np.arctan2(obstacle[1] - position[1], obstacle[0] - position[0]) - np.deg2rad(orientation)
-            if distance <= SENSOR_RANGE and np.abs(np.rad2deg(angle)) <= SENSOR_ANGLE / 2:
+            angle = np.arctan2(
+                obstacle[1] - position[1], obstacle[0] - position[0]
+            ) - np.deg2rad(orientation)
+            if (
+                distance <= SENSOR_RANGE
+                and np.abs(np.rad2deg(angle)) <= SENSOR_ANGLE / 2
+            ):
                 distances.append(distance)
             else:
                 distances.append(SENSOR_RANGE)

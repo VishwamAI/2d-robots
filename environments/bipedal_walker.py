@@ -574,7 +574,9 @@ class BipedalWalker(gym.Env, EzPickle):
     self.prev_shaping = shaping
 
     for a in action:
-        reward -= 0.001 * MOTORS_TORQUE * np.clip(np.abs(a), 0, 1)  # Adjusted motor penalty
+        reward -= (
+            0.001 * MOTORS_TORQUE * np.clip(np.abs(a), 0, 1)
+        )  # Adjusted motor penalty
 
     terminated = False
     if self.game_over or pos[0] < 0:
