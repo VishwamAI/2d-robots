@@ -180,6 +180,8 @@ try:
                     print(f"'action' method signature: {saved_policy.signatures['action']}")
                 else:
                     print("The 'action' method is not present in the saved policy signatures.")
+                    # Additional debugging: Print the available methods in the saved policy
+                    print(f"Available methods in saved policy: {dir(saved_policy)}")
             except Exception as e:
                 print(f"Error saving policy at step {step}: {e}")
 
@@ -206,3 +208,9 @@ try:
         print(f"Error saving policy: {e}")
 except Exception as e:
     print(f"An unexpected error occurred during training: {e}")
+
+# Debugging: Confirm 'action' method in policy signatures
+if 'action' in agent.policy.signatures:
+    print(f"'action' method is in policy signatures: {agent.policy.signatures['action']}")
+else:
+    print("'action' method is NOT in policy signatures")
