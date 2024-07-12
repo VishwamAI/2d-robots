@@ -32,6 +32,13 @@ try:
     policy = py_tf_eager_policy.SavedModelPyTFEagerPolicy(
         policy_dir, time_step_spec=eval_env.time_step_spec()
     )
+    # Debugging: Print the loaded policy object
+    print(f"Loaded policy: {policy}")
+    # Debugging: Check if the 'action' method exists
+    if hasattr(policy, 'action'):
+        print("The loaded policy has an 'action' method.")
+    else:
+        print("The loaded policy does NOT have an 'action' method.")
 except Exception as e:
     raise RuntimeError(
         f"Error loading policy from '{policy_dir}': {e}"
