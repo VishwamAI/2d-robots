@@ -18,7 +18,7 @@ from tf_agents.eval import metric_utils
 from tf_agents.policies import policy_saver
 
 from src.environment import BirdRobotEnvironment
-from config import CONTROL_FREQUENCY, REWARD_COLLISION, REWARD_GOAL, REWARD_STEP, NUM_ITERATIONS, COLLECT_STEPS_PER_ITERATION, LOG_INTERVAL, EVAL_INTERVAL, POLICY_DIR
+from config.config import CONTROL_FREQUENCY, REWARD_COLLISION, REWARD_GOAL, REWARD_STEP, NUM_ITERATIONS, COLLECT_STEPS_PER_ITERATION, LOG_INTERVAL, EVAL_INTERVAL, POLICY_DIR
 import os
 
 print(f"POLICY_DIR is set to: {POLICY_DIR}")
