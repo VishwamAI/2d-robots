@@ -94,7 +94,7 @@ log_interval = LOG_INTERVAL
 eval_interval = EVAL_INTERVAL
 
 # Initialize the PolicySaver
-policy_saver = policy_saver.PolicySaver(agent.policy)
+policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None, signatures={'action': agent.policy.action.get_concrete_function()})
 
 # Training loop
 try:
