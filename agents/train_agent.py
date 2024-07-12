@@ -36,17 +36,6 @@ print(
     f"{agent.policy.action}"
 )
 
-# Initialize the PolicySaver
-tf_policy_saver = policy_saver.PolicySaver(
-    agent.policy,
-    batch_size=1,  # Specify a batch size of 1
-    use_nest_path_signatures=True,
-    train_step=train_step_counter  # Include the train step counter
-)
-
-# Save the policy
-tf_policy_saver.save(POLICY_DIR)
-
 # Save the 'action' method explicitly
 concrete_action_function = agent.policy.action.get_concrete_function(
     tf.TensorSpec(
@@ -58,3 +47,15 @@ tf.saved_model.save(
     agent.policy, POLICY_DIR,
     signatures={'action': concrete_action_function}
 )
+
+# Initialize the PolicySaver
+tf_policy_saver = policy_saver.PolicySaver(
+    agent.policy,
+    batch_size=1,  # Specify a batch size of 1
+    use_nest_path_signatures=True,
+    train_step=train_step_counter  # Include the train step counter
+)
+
+# Save the policy
+# Commenting out the PolicySaver save operation to preserve the explicitly saved 'action' method
+# tf_policy_saver.save(POLICY_DIR)
