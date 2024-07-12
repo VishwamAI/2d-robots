@@ -61,5 +61,9 @@ for _ in range(num_episodes):
             print(f"AttributeError during policy execution: {e}")
             print(f"Attributes of policy object: {dir(saved_policy)}")
             raise
+        except KeyError as e:
+            print(f"KeyError during policy execution: {e}")
+            print(f"Available signatures in policy object: {saved_policy.signatures.keys()}")
+            raise
 
     print("Episode return: {}".format(episode_return))
