@@ -32,6 +32,10 @@ if not os.path.exists(policy_dir):
 try:
     # Load the saved policy using tf.saved_model.load
     saved_policy = tf.saved_model.load(policy_dir)
+    # Debugging: Print the contents of the policy directory and inspect the loaded policy object
+    print(f"Contents of policy directory '{policy_dir}': {os.listdir(policy_dir)}")
+    print(f"Loaded policy object: {saved_policy}")
+    print(f"Attributes of loaded policy object: {dir(saved_policy)}")
     # Check if the saved policy has the 'action' method
     if 'action' not in saved_policy.signatures:
         raise AttributeError("Loaded policy object does not have an 'action' method.")
@@ -41,11 +45,6 @@ try:
     policy = py_tf_eager_policy.SavedModelPyTFEagerPolicy(saved_policy, time_step_spec=eval_env.time_step_spec())
 except Exception as e:
     raise RuntimeError(f"Error loading policy from '{policy_dir}': {e}")
-
-# Debugging: Print the contents of the policy directory and inspect the loaded policy object
-print(f"Contents of policy directory '{policy_dir}': {os.listdir(policy_dir)}")
-print(f"Loaded policy object: {saved_policy}")
-print(f"Attributes of loaded policy object: {dir(saved_policy)}")
 
 # Print TensorFlow version for debugging
 print("TensorFlow version:", tf.__version__)
@@ -63,7 +62,7 @@ for _ in range(num_episodes):
             episode_return += time_step.reward
         except AttributeError as e:
             print(f"AttributeError during policy execution: {e}")
-            print(f"Attributes of policy object: {dir(saved_policy)}")
+            print(f"Attributes of policy object: {dir(policy)}")
             raise
 
     print('Episode return: {}'.format(episode_return))
