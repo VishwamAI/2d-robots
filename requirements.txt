@@ -1,6 +1,6 @@
 numpy
 gym
-tensorflow==2.16.2
+tensorflow==2.13.1
 tf-agents==0.19.0
 tensorflow-probability==0.23.0
 keras==2.8.0
