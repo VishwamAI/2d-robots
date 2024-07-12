@@ -124,6 +124,8 @@ try:
         print(f"Shape of observations: {tf.shape(observations)}")
         # Ensure observations have a batch dimension
         batched_observations = tf.nest.map_structure(lambda x: tf.expand_dims(x, axis=0) if len(x.shape) == 1 else x, observations)
+        # Ensure observations have the correct shape expected by the QNetwork
+        batched_observations = tf.nest.map_structure(lambda x: tf.ensure_shape(x, [None] + list(q_net.input_tensor_spec.shape[1:])), batched_observations)
         print(f"Observations shape: {observations.shape}\nBatched observations shape: {batched_observations.shape}")
         print(f"Shape of batched observations: {tf.shape(batched_observations)}")
         print(f"QNetwork input spec: {q_net.input_tensor_spec}")
