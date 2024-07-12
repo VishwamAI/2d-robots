@@ -136,12 +136,7 @@ try:
                 except Exception as e:
                     print(f"Error creating directory {policy_dir}: {e}")
             try:
-                print("Creating concrete function for policy action method...")
-                concrete_action_fn = agent.policy.action.get_concrete_function()
-                print("Concrete function created successfully.")
-                signatures = {'serving_default': concrete_action_fn}
-                print("Saving policy with signatures:", signatures)
-                policy_saver.save(policy_dir, signatures=signatures)
+                policy_saver.save(policy_dir)
                 print(f"Policy saved successfully in {policy_dir} at step {step}")
             except Exception as e:
                 print(f"Error saving policy at step {step}: {e}")
@@ -152,12 +147,7 @@ try:
         os.makedirs(policy_dir)
 
     try:
-        print("Creating concrete function for policy action method...")
-        concrete_action_fn = agent.policy.action.get_concrete_function()
-        print("Concrete function created successfully.")
-        signatures = {'serving_default': concrete_action_fn}
-        print("Saving policy with signatures:", signatures)
-        policy_saver.save(policy_dir, signatures=signatures)
+        policy_saver.save(policy_dir)
         print(f"Policy saved successfully in {policy_dir}")
     except Exception as e:
         print(f"Error saving policy: {e}")
