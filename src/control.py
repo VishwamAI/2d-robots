@@ -11,7 +11,8 @@ class BirdRobotControl:
     """
     Control system for the 2D bird robot.
 
-    This class provides methods to control the bird robot's movement and orientation.
+    This class provides methods to control the bird robot's movement and
+    orientation.
     """
 
     def __init__(self):
@@ -48,10 +49,12 @@ class BirdRobotControl:
 
     def move_forward(self, position):
         """
-        Moves the bird robot forward based on its current velocity and orientation.
+        Moves the bird robot forward based on its current velocity and
+        orientation.
 
         Args:
-            position (np.ndarray): The current position of the bird robot [x, y].
+            position (np.ndarray): The current position of the bird robot
+            [x, y].
 
         Returns:
             np.ndarray: The new position of the bird robot [x, y].
@@ -68,10 +71,12 @@ class BirdRobotControl:
 
     def move_backward(self, position):
         """
-        Moves the bird robot backward based on its current velocity and orientation.
+        Moves the bird robot backward based on its current velocity and
+        orientation.
 
         Args:
-            position (np.ndarray): The current position of the bird robot [x, y].
+            position (np.ndarray): The current position of the bird robot
+            [x, y].
 
         Returns:
             np.ndarray: The new position of the bird robot [x, y].
