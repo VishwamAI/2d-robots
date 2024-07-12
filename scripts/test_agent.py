@@ -1,8 +1,13 @@
 import os
+import sys
 import tensorflow as tf
 from tf_agents.environments import tf_py_environment
 from tf_agents.policies import py_tf_eager_policy
-from ..src.environment import BirdRobotEnvironment
+
+# Append the src directory to the Python path
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
+
+from src.environment import BirdRobotEnvironment
 from config import POLICY_DIR
 
 # Create the environment
