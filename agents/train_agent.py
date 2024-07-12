@@ -56,7 +56,5 @@ tf_policy_saver = policy_saver.PolicySaver(
     train_step=train_step_counter  # Include the train step counter
 )
 
-# Save the policy
-# Commenting out the PolicySaver save operation to preserve the explicitly
-# saved 'action' method
-# tf_policy_saver.save(POLICY_DIR)
+# Save the policy using PolicySaver
+tf_policy_saver.save(POLICY_DIR)
