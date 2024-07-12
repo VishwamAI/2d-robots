@@ -8,7 +8,7 @@ import sys
 # Add the project's root directory to the Python path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.environment import BirdRobotEnvironment
+from environments.environment import BirdRobotEnvironment
 from config.config import POLICY_DIR
 
 # Print the current working directory and Python path for debugging
