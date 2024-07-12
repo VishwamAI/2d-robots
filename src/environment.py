@@ -100,38 +100,16 @@ class BirdRobotEnvironment(py_environment.PyEnvironment):
             BOUNDARY_MAX - BOUNDARY_OFFSET
         ]  # Set goal position (goal_x, goal_y)
         for i, obstacle in enumerate(self._obstacles):
-            self._state[6 + i * 3:8 + i * 3] = obstacle  # Set obstacle positions
-            # (obstacle_x, obstacle_y)
-            self._state[8 + i * 3] = SENSOR_RANGE  # Initialize obstacle distances
-            # to SENSOR_RANGE
+            self._state[6 + i * 3:8 + i * 3] = obstacle
+            # Set obstacle positions (obstacle_x, obstacle_y)
+            self._state[8 + i * 3] = SENSOR_RANGE
+            # Initialize obstacle distances to SENSOR_RANGE
         self._episode_ended = False
         return ts.restart(self._get_observation())
 
     def _step(self, action):
         """
         Updates the environment state based on the action taken by the agent.
-
-        Args:
-            action (int): The action to be taken by the agent. Valid actions are
-            defined by the ACTION_* constants.
-
-        Returns:
-            ts.TimeStep: A TimeStep object representing the new state of the
-            environment. The TimeStep object contains:
-                - observation: The new state of the environment.
-                - reward: The reward received for taking the action.
-                - step_type: The type of the time step (FIRST, MID, or LAST).
-                - discount: The discount factor for future rewards.
-
-        Termination Conditions:
-            - The episode ends if the bird robot collides with an obstacle or
-            goes out of bounds, resulting in a reward of REWARD_COLLISION.
-            - The episode ends if the bird robot reaches the goal, resulting in
-            a reward of REWARD_GOAL.
-            - If the episode has ended, a termination TimeStep is returned with
-            a reward of 0.0.
-            - Otherwise, a transition TimeStep is returned with a reward of
-            REWARD_STEP and a discount factor of 0.9.
         """
         if self._episode_ended:
             return self.reset()
@@ -195,7 +173,9 @@ class BirdRobotEnvironment(py_environment.PyEnvironment):
             self._state[:2] > BOUNDARY_MAX - BOUNDARY_OFFSET
         ):
             self._episode_ended = True
-            return ts.termination(self._get_observation(), reward=REWARD_COLLISION)
+            return ts.termination(
+                self._get_observation(), reward=REWARD_COLLISION
+            )
 
         # Check for collisions with obstacles
         for obstacle in self._obstacles:
@@ -208,10 +188,14 @@ class BirdRobotEnvironment(py_environment.PyEnvironment):
         # Check if the goal is reached
         if np.linalg.norm(self._state[:2] - self._state[4:6]) < COLLISION_DISTANCE:
             self._episode_ended = True
-            return ts.termination(self._get_observation(), reward=REWARD_GOAL)
+            return ts.termination(
+                self._get_observation(), reward=REWARD_GOAL
+            )
 
         if self._episode_ended:
-            return ts.termination(self._get_observation(), reward=0.0)
+            return ts.termination(
+                self._get_observation(), reward=0.0
+            )
         else:
             return ts.transition(
                 self._get_observation(), reward=REWARD_STEP, discount=0.9
