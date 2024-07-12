@@ -100,6 +100,10 @@ policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None, signature
 assert callable(agent.policy.action), "The 'action' method of the policy is not callable."
 print(f"The 'action' method of the policy is a callable TensorFlow graph: {agent.policy.action}")
 
+# Log the structure of the 'action' method
+concrete_function = tf.function(agent.policy.action).get_concrete_function()
+print(f"Concrete function for 'action' method: {concrete_function}")
+
 # Training loop
 try:
     for _ in range(num_iterations):
