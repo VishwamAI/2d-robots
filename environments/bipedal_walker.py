@@ -530,64 +530,64 @@ class BipedalWalker(gym.Env, EzPickle):
                 MOTORS_TORQUE * np.clip(np.abs(action[3]), 0, 1)
             )
 
-    self.world.Step(1.0 / FPS, 6 * 30, 2 * 30)
+        self.world.Step(1.0 / FPS, 6 * 30, 2 * 30)
 
-    pos = self.hull.position
-    vel = self.hull.linearVelocity
+        pos = self.hull.position
+        vel = self.hull.linearVelocity
 
-    for i in range(10):
-        self.lidar[i].fraction = 1.0
-        self.lidar[i].p1 = pos
-        self.lidar[i].p2 = (
-            pos[0] + math.sin(1.5 * i / 10.0) * LIDAR_RANGE,
-            pos[1] - math.cos(1.5 * i / 10.0) * LIDAR_RANGE,
-        )
-        self.world.RayCast(self.lidar[i], self.lidar[i].p1, self.lidar[i].p2)
+        for i in range(10):
+            self.lidar[i].fraction = 1.0
+            self.lidar[i].p1 = pos
+            self.lidar[i].p2 = (
+                pos[0] + math.sin(1.5 * i / 10.0) * LIDAR_RANGE,
+                pos[1] - math.cos(1.5 * i / 10.0) * LIDAR_RANGE,
+            )
+            self.world.RayCast(self.lidar[i], self.lidar[i].p1, self.lidar[i].p2)
 
-    state = [
-        self.hull.angle,
-        2.0 * self.hull.angularVelocity / FPS,
-        0.3 * vel.x * (VIEWPORT_W / SCALE) / FPS,
-        0.3 * vel.y * (VIEWPORT_H / SCALE) / FPS,
-        self.joints[0].angle,
-        self.joints[0].speed / SPEED_HIP,
-        self.joints[1].angle + 1.0,
-        self.joints[1].speed / SPEED_KNEE,
-        1.0 if self.legs[1].ground_contact else 0.0,
-        self.joints[2].angle,
-        self.joints[2].speed / SPEED_HIP,
-        self.joints[3].angle + 1.0,
-        self.joints[3].speed / SPEED_KNEE,
-        1.0 if self.legs[3].ground_contact else 0.0,
-    ]
-    state += [l.fraction for l in self.lidar]
-    assert len(state) == 24
+        state = [
+            self.hull.angle,
+            2.0 * self.hull.angularVelocity / FPS,
+            0.3 * vel.x * (VIEWPORT_W / SCALE) / FPS,
+            0.3 * vel.y * (VIEWPORT_H / SCALE) / FPS,
+            self.joints[0].angle,
+            self.joints[0].speed / SPEED_HIP,
+            self.joints[1].angle + 1.0,
+            self.joints[1].speed / SPEED_KNEE,
+            1.0 if self.legs[1].ground_contact else 0.0,
+            self.joints[2].angle,
+            self.joints[2].speed / SPEED_HIP,
+            self.joints[3].angle + 1.0,
+            self.joints[3].speed / SPEED_KNEE,
+            1.0 if self.legs[3].ground_contact else 0.0,
+        ]
+        state += [l.fraction for l in self.lidar]
+        assert len(state) == 24
 
-    self.scroll = pos.x - VIEWPORT_W / SCALE / 5
+        self.scroll = pos.x - VIEWPORT_W / SCALE / 5
 
-    shaping = 200 * pos[0] / SCALE  # Adjusted reward shaping for digital walking
-    shaping -= 20.0 * abs(state[0])  # Increased penalty for head tilt
+        shaping = 200 * pos[0] / SCALE  # Adjusted reward shaping for digital walking
+        shaping -= 20.0 * abs(state[0])  # Increased penalty for head tilt
 
-    reward = 0
-    if self.prev_shaping is not None:
-        reward = shaping - self.prev_shaping
-    self.prev_shaping = shaping
+        reward = 0
+        if self.prev_shaping is not None:
+            reward = shaping - self.prev_shaping
+        self.prev_shaping = shaping
 
-    for a in action:
-        reward -= (
-            0.001 * MOTORS_TORQUE * np.clip(np.abs(a), 0, 1)
-        )  # Adjusted motor penalty
+        for a in action:
+            reward -= (
+                0.001 * MOTORS_TORQUE * np.clip(np.abs(a), 0, 1)
+            )  # Adjusted motor penalty
 
-    terminated = False
-    if self.game_over or pos[0] < 0:
-        reward = -100
-        terminated = True
-    if pos[0] > (TERRAIN_LENGTH - TERRAIN_GRASS) * TERRAIN_STEP:
-        terminated = True
+        terminated = False
+        if self.game_over or pos[0] < 0:
+            reward = -100
+            terminated = True
+        if pos[0] > (TERRAIN_LENGTH - TERRAIN_GRASS) * TERRAIN_STEP:
+            terminated = True
 
-    if self.render_mode == "human":
-        self.render()
-    return np.array(state, dtype=np.float32), reward, terminated, False, {}
+        if self.render_mode == "human":
+            self.render()
+        return np.array(state, dtype=np.float32), reward, terminated, False, {}
 
     def render(self):
         if self.render_mode is None:
