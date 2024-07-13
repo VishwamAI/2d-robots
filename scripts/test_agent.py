@@ -58,11 +58,14 @@ for _ in range(num_episodes):
 
     while not time_step.is_last():
         try:
-            # Use the 'action' method from the saved policy's signatures
-            action_fn = saved_policy.signatures['action']
-            action_step = action_fn(time_step)
-            time_step = eval_env.step(action_step['action'])
-            episode_return += time_step.reward
+            # Check if 'action' method is in the policy signatures before calling it
+            if "action" in saved_policy.signatures:
+                action_fn = saved_policy.signatures['action']
+                action_step = action_fn(time_step)
+                time_step = eval_env.step(action_step['action'])
+                episode_return += time_step.reward
+            else:
+                raise AttributeError("'action' method is not present in the policy signatures")
         except AttributeError as e:
             print(f"AttributeError during policy execution: {e}")
             print(f"Attributes of policy object: {dir(saved_policy)}")
