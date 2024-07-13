@@ -112,9 +112,19 @@ policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None)
 
 # Register the 'action' method as a concrete function
 print(f"Registering 'action' method as a concrete function with time_step_placeholder: {time_step_placeholder}")
-action_fn = agent.policy.action.get_concrete_function(time_step_placeholder)
-policy_saver.register_concrete_function('action', action_fn)
-print(f"'action' method registered as a concrete function: {action_fn}")
+try:
+    action_fn = agent.policy.action.get_concrete_function(time_step_placeholder)
+    policy_saver.register_concrete_function('action', action_fn)
+    print(f"'action' method registered as a concrete function: {action_fn}")
+except AttributeError as e:
+    print(f"AttributeError: {e}")
+    print(f"Attributes of policy object: {dir(agent.policy)}")
+    raise
+
+print(f"Policy signatures immediately after registering 'action': {policy_saver.policy.signatures}")
+
+# Debugging: Print the policy's signatures immediately after registration
+print(f"Policy signatures immediately after registration: {policy_saver.policy.signatures}")
 
 # Ensure the 'action' method is a callable TensorFlow graph
 assert callable(agent.policy.action), "The 'action' method of the policy is not callable."
