@@ -119,7 +119,8 @@ except AttributeError as e:
     raise
 
 # Ensure the 'action' method is included in the policy signatures
-policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None, signatures={'action': action_fn})
+signatures = {'action': action_fn}
+policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None, signatures=signatures)
 print(f"Policy signatures immediately after registering 'action': {policy_saver.policy.signatures}")
 
 # Debugging: Print the policy's signatures immediately after registration
