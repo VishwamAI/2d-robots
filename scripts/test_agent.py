@@ -4,6 +4,7 @@ from tf_agents.trajectories import time_step as ts
 import numpy as np
 import os
 import sys
+import tf_agents
 
 # Add the project's root directory to the Python path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -11,14 +12,12 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.environment import BirdRobotEnvironment
 from config.config import POLICY_DIR
 
+# Print the TensorFlow Agents library version for debugging
+print("TF-Agents version:", tf_agents.__version__)
+
 # Print the current working directory and Python path for debugging
 print("Current working directory:", os.getcwd())
 print("Python path:", sys.path)
-
-# Print the TensorFlow Agents library version for debugging
-import tf_agents
-
-print("TF-Agents version:", tf_agents.__version__)
 
 # Create the environment
 eval_py_env = BirdRobotEnvironment()
