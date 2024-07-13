@@ -92,10 +92,7 @@ log_interval = LOG_INTERVAL
 eval_interval = EVAL_INTERVAL
 
 # Initialize the PolicySaver
-policy_saver = policy_saver.PolicySaver(
-    agent.policy,
-    signatures={'action': agent.policy.action}
-)
+policy_saver = policy_saver.PolicySaver(agent.policy)
 
 # Training loop
 try:
@@ -146,6 +143,26 @@ try:
                     f"Policy saved successfully in {policy_dir} at step "
                     f"{step}"
                 )
+
+                # Verify that the 'action' signature is present in the saved model
+                try:
+                    saved_model_cli_output = os.popen(
+                        f"saved_model_cli show --dir {policy_dir} --all"
+                    ).read()
+                    if 'action' not in saved_model_cli_output:
+                        raise RuntimeError(
+                            (
+                                "The 'action' signature is not present in the saved model at "
+                                f"{policy_dir}. Please ensure that the model is saved "
+                                "correctly."
+                            )
+                        )
+                    print("The 'action' signature is present in the saved model.")
+                except Exception as e:
+                    print(
+                        "Error verifying the 'action' signature in the saved model: "
+                        f"{e}"
+                    )
             except Exception as e:
                 print(
                     f"Error saving policy at step {step}: {e}"
@@ -184,6 +201,17 @@ try:
                 "Error verifying the 'action' signature in the saved model: "
                 f"{e}"
             )
+
+        # Attempt to load the saved policy and call the 'action' method
+        try:
+            loaded_policy = tf.saved_model.load(policy_dir)
+            if hasattr(loaded_policy, 'action'):
+                print("The loaded policy has an 'action' method.")
+            else:
+                print("The loaded policy does NOT have an 'action' method.")
+                print(f"Available attributes of the loaded policy object: {dir(loaded_policy)}")
+        except Exception as e:
+            print(f"Error loading the saved policy or calling the 'action' method: {e}")
     except Exception as e:
         print(
             f"Error saving policy: {e}"
