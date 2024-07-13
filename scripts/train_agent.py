@@ -101,7 +101,8 @@ collect_steps_per_iteration = COLLECT_STEPS_PER_ITERATION
 log_interval = LOG_INTERVAL
 eval_interval = EVAL_INTERVAL
 
-# Create a placeholder TimeStep object using the spec provided by time_step_spec
+# Create a placeholder TimeStep object using the spec provided by
+# time_step_spec
 time_step_spec = agent.policy.time_step_spec
 time_step_placeholder = tf.nest.map_structure(
     lambda spec: tf.TensorSpec(
@@ -192,7 +193,8 @@ try:
         # Collect a few steps and save to the replay buffer
         collect_driver.run()
 
-        # Sample a batch of data from the replay buffer and update the agent's network
+        # Sample a batch of data from the replay buffer and update the agent's
+        # network
         experience, _ = next(iterator)
         observations = experience.observation
         print(f"Shape of observations: {tf.shape(observations)}")
@@ -269,7 +271,8 @@ try:
                 else:
                     print(
                         "The 'action' method is not present in the saved model signatures.")
-                    # Additional debugging: Print the available methods in the saved model
+                    # Additional debugging: Print the available methods in the
+                    # saved model
                     print(
                         f"Available methods in saved policy: {dir(saved_policy)}")
                 print(
@@ -289,10 +292,12 @@ try:
                     print(
                         "The 'action' method is not present in the saved policy signatures."
                     )
-                    # Additional debugging: Print the available methods in the saved policy
+                    # Additional debugging: Print the available methods in the
+                    # saved policy
                     print(
                         f"Available methods in saved policy: {dir(saved_policy)}")
-                    # Additional debugging: Print the concrete function for 'action' method
+                    # Additional debugging: Print the concrete function for
+                    # 'action' method
             except Exception as e:
                 print(f"Error saving policy at step {step}: {e}")
 
@@ -316,9 +321,11 @@ try:
                 f"'action' method signature: {saved_model.signatures['action']}")
         else:
             print("The 'action' method is not present in the saved model signatures.")
-            # Additional debugging: Print the available methods in the saved model
+            # Additional debugging: Print the available methods in the saved
+            # model
             print(f"Available methods in saved model: {dir(saved_model)}")
-            # Additional debugging: Print the concrete function for 'action' method
+            # Additional debugging: Print the concrete function for 'action'
+            # method
     except Exception as e:
         print(f"Error saving policy: {e}")
 except Exception as e:
