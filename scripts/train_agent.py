@@ -150,9 +150,9 @@ try:
                 if "action" not in saved_model_cli_output:
                     raise RuntimeError(
                         (
-                            "The 'action' signature is not present in the saved model at "
-                            f"{POLICY_DIR}. Please ensure that the model is saved "
-                            "correctly."
+                            "The 'action' signature is not present in the "
+                            f"saved model at {POLICY_DIR}. Please ensure "
+                            "that the model is saved correctly."
                         )
                     )
                 print("The 'action' signature is present in the saved model.")
