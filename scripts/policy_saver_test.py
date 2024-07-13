@@ -21,10 +21,14 @@ time_step_placeholder = tf.nest.map_structure(
     lambda spec: tf.TensorSpec(shape=[None] + list(spec.shape), dtype=spec.dtype),
     time_step_spec,
 )
-action_fn = policy.action.get_concrete_function(time_step_placeholder)
+
+# Ensure the 'action' method is a tf.function
+@tf.function(input_signature=[time_step_placeholder])
+def action_fn(time_step):
+    return policy.action(time_step)
 
 # Initialize the PolicySaver with the 'action' method included in the signatures
-signatures = {'action': action_fn}
+signatures = {'action': action_fn.get_concrete_function()}
 policy_saver = PolicySaver(policy, batch_size=None, signatures=signatures)
 
 # Save the policy
