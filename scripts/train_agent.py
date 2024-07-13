@@ -12,8 +12,11 @@ from tf_agents.policies import policy_saver
 
 from environment import BirdRobotEnvironment
 from config import (
-    NUM_ITERATIONS, COLLECT_STEPS_PER_ITERATION, LOG_INTERVAL, EVAL_INTERVAL,
-    POLICY_DIR
+    NUM_ITERATIONS,
+    COLLECT_STEPS_PER_ITERATION,
+    LOG_INTERVAL,
+    EVAL_INTERVAL,
+    POLICY_DIR,
 )
 import os
 
@@ -30,7 +33,8 @@ fc_layer_params = (100, 50)
 q_net = q_network.QNetwork(
     train_env.observation_spec(),
     train_env.action_spec(),
-    fc_layer_params=fc_layer_params)
+    fc_layer_params=fc_layer_params,
+)
 
 # Set up the DQN agent
 optimizer = tf.compat.v1.train.AdamOptimizer(learning_rate=1e-3)
@@ -41,14 +45,16 @@ agent = dqn_agent.DqnAgent(
     q_network=q_net,
     optimizer=optimizer,
     td_errors_loss_fn=common.element_wise_squared_loss,
-    train_step_counter=train_step_counter)
+    train_step_counter=train_step_counter,
+)
 agent.initialize()
 
 # Set up the replay buffer
 replay_buffer = tf_uniform_replay_buffer.TFUniformReplayBuffer(
     data_spec=agent.collect_data_spec,
     batch_size=train_env.batch_size,
-    max_length=100000)
+    max_length=100000,
+)
 
 # Set up the random policy
 random_policy = random_tf_policy.RandomTFPolicy(
@@ -68,7 +74,8 @@ collect_driver = dynamic_step_driver.DynamicStepDriver(
     train_env,
     random_policy,
     observers=[replay_buffer.add_batch] + train_metrics,
-    num_steps=1)
+    num_steps=1,
+)
 
 # Collect initial data
 initial_collect_steps = 1000
@@ -78,9 +85,8 @@ for _ in range(initial_collect_steps):
 
 # Set up the dataset
 dataset = replay_buffer.as_dataset(
-    num_parallel_calls=3,
-    sample_batch_size=64,
-    num_steps=2).prefetch(3)
+    num_parallel_calls=3, sample_batch_size=64, num_steps=2
+).prefetch(3)
 
 # Set up the iterator
 iterator = iter(dataset)
@@ -108,7 +114,7 @@ try:
         step = agent.train_step_counter.numpy()
 
         if step % log_interval == 0:
-            print('step = {0}: loss = {1}'.format(step, train_loss))
+            print("step = {0}: loss = {1}".format(step, train_loss))
 
         if step % eval_interval == 0:
             avg_return = metric_utils.compute_summaries(
@@ -117,35 +123,28 @@ try:
                 policy=agent.policy,
                 num_episodes=10,
                 tf_summaries=False,
-                log=True)
-            print('step = {0}: Average Return = {1}'.format(step, avg_return))
+                log=True,
+            )
+            print("step = {0}: Average Return = {1}".format(step, avg_return))
 
         # Attempt to save the policy more frequently for debugging purposes
-        print(
-            f"Attempting to save policy at step {step} in directory {POLICY_DIR}"
-        )
+        print(f"Attempting to save policy at step {step} in directory {POLICY_DIR}")
         if not os.path.exists(POLICY_DIR):
             try:
                 os.makedirs(POLICY_DIR)
-                print(
-                    f"Directory {POLICY_DIR} created successfully."
-                )
+                print(f"Directory {POLICY_DIR} created successfully.")
             except Exception as e:
-                print(
-                    f"Error creating directory {POLICY_DIR}: {e}"
-                )
+                print(f"Error creating directory {POLICY_DIR}: {e}")
         try:
             policy_saver.save(POLICY_DIR)
-            print(
-                f"Policy saved successfully in {POLICY_DIR} at step {step}"
-            )
+            print(f"Policy saved successfully in {POLICY_DIR} at step {step}")
 
             # Verify that the 'action' signature is present in the saved model
             try:
                 saved_model_cli_output = os.popen(
                     f"saved_model_cli show --dir {POLICY_DIR} --all"
                 ).read()
-                if 'action' not in saved_model_cli_output:
+                if "action" not in saved_model_cli_output:
                     raise RuntimeError(
                         (
                             "The 'action' signature is not present in the saved model at "
@@ -156,34 +155,27 @@ try:
                 print("The 'action' signature is present in the saved model.")
             except Exception as e:
                 print(
-                    "Error verifying the 'action' signature in the saved model: "
-                    f"{e}"
+                    "Error verifying the 'action' signature in the saved model: " f"{e}"
                 )
         except Exception as e:
-            print(
-                f"Error saving policy at step {step}: {e}"
-            )
+            print(f"Error saving policy at step {step}: {e}")
 
     # Final save of the trained policy
     policy_dir = POLICY_DIR
-    print(
-        f"Attempting final save of policy in directory {policy_dir}"
-    )
+    print(f"Attempting final save of policy in directory {policy_dir}")
     if not os.path.exists(policy_dir):
         os.makedirs(policy_dir)
 
     try:
         policy_saver.save(policy_dir)
-        print(
-            f"Policy saved successfully in {policy_dir}"
-        )
+        print(f"Policy saved successfully in {policy_dir}")
 
         # Verify that the 'action' signature is present in the saved model
         try:
             saved_model_cli_output = os.popen(
                 f"saved_model_cli show --dir {policy_dir} --all"
             ).read()
-            if 'action' not in saved_model_cli_output:
+            if "action" not in saved_model_cli_output:
                 raise RuntimeError(
                     (
                         "The 'action' signature is not present in the saved model at "
@@ -193,26 +185,21 @@ try:
                 )
             print("The 'action' signature is present in the saved model.")
         except Exception as e:
-            print(
-                "Error verifying the 'action' signature in the saved model: "
-                f"{e}"
-            )
+            print("Error verifying the 'action' signature in the saved model: " f"{e}")
 
         # Attempt to load the saved policy and call the 'action' method
         try:
             loaded_policy = tf.saved_model.load(policy_dir)
-            if hasattr(loaded_policy, 'action'):
+            if hasattr(loaded_policy, "action"):
                 print("The loaded policy has an 'action' method.")
             else:
                 print("The loaded policy does NOT have an 'action' method.")
-                print(f"Available attributes of the loaded policy object: {dir(loaded_policy)}")
+                print(
+                    f"Available attributes of the loaded policy object: {dir(loaded_policy)}"
+                )
         except Exception as e:
             print(f"Error loading the saved policy or calling the 'action' method: {e}")
     except Exception as e:
-        print(
-            f"Error saving policy: {e}"
-        )
+        print(f"Error saving policy: {e}")
 except Exception as e:
-    print(
-        f"An unexpected error occurred during training: {e}"
-    )
+    print(f"An unexpected error occurred during training: {e}")
