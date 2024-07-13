@@ -122,34 +122,34 @@ try:
 
         # Attempt to save the policy more frequently for debugging purposes
         print(
-            f"Attempting to save policy at step {step} in directory {policy_dir}"
+            f"Attempting to save policy at step {step} in directory {POLICY_DIR}"
         )
-        if not os.path.exists(policy_dir):
+        if not os.path.exists(POLICY_DIR):
             try:
-                os.makedirs(policy_dir)
+                os.makedirs(POLICY_DIR)
                 print(
-                    f"Directory {policy_dir} created successfully."
+                    f"Directory {POLICY_DIR} created successfully."
                 )
             except Exception as e:
                 print(
-                    f"Error creating directory {policy_dir}: {e}"
+                    f"Error creating directory {POLICY_DIR}: {e}"
                 )
         try:
-            policy_saver.save(policy_dir)
+            policy_saver.save(POLICY_DIR)
             print(
-                f"Policy saved successfully in {policy_dir} at step {step}"
+                f"Policy saved successfully in {POLICY_DIR} at step {step}"
             )
 
             # Verify that the 'action' signature is present in the saved model
             try:
                 saved_model_cli_output = os.popen(
-                    f"saved_model_cli show --dir {policy_dir} --all"
+                    f"saved_model_cli show --dir {POLICY_DIR} --all"
                 ).read()
                 if 'action' not in saved_model_cli_output:
                     raise RuntimeError(
                         (
                             "The 'action' signature is not present in the saved model at "
-                            f"{policy_dir}. Please ensure that the model is saved "
+                            f"{POLICY_DIR}. Please ensure that the model is saved "
                             "correctly."
                         )
                     )
