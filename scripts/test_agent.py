@@ -41,6 +41,11 @@ try:
         print(f"Policy object details: {policy}")
         # Print the signatures of the loaded policy
         print(f"Policy signatures: {policy.signatures}")
+        # Attempt to retrieve the concrete function for 'action'
+        if 'action' in policy.signatures:
+            print("The 'action' method is present in the policy signatures.")
+        else:
+            print("The 'action' method is NOT present in the policy signatures.")
 except Exception as e:
     print(f"Exception details: {e}")
     raise RuntimeError(
