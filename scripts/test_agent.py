@@ -45,7 +45,8 @@ try:
         if 'action' in policy.signatures:
             print("The 'action' method is present in the policy signatures.")
         else:
-            print("The 'action' method is NOT present in the policy signatures.")
+            print("The 'action' method is NOT present in the policy "
+                  "signatures.")
 except Exception as e:
     print(f"Exception details: {e}")
     raise RuntimeError(
