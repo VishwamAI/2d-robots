@@ -48,14 +48,6 @@ except Exception as e:
         f"Error loading policy from '{policy_dir}': {e}"
     )
 
-# Register the 'action' method as a concrete function
-if hasattr(policy, 'action'):
-    policy.action = tf.function(policy.action)
-    print(
-        "Registered 'action' method as a concrete function: "
-        f"{policy.action}"
-    )
-
 # Run a few episodes and print the results
 num_episodes = 10
 for _ in range(num_episodes):
