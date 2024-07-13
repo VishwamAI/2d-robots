@@ -7,7 +7,6 @@ from tf_agents.policies import PolicySaver
 import tensorflow as tf
 from src.environment import BirdRobotEnvironment
 from tf_agents.environments import tf_py_environment
-from tensorflow.python.saved_model import nested_structure_coder
 
 # Initialize the environment
 train_py_env = BirdRobotEnvironment()
@@ -28,8 +27,8 @@ time_step_placeholder = tf.nest.map_structure(
 def action_fn(time_step):
     return policy.action(time_step)
 
-# Initialize the PolicySaver without the 'signatures' argument
-policy_saver = PolicySaver(policy, batch_size=None)
+# Initialize the PolicySaver with the 'signatures' argument
+policy_saver = PolicySaver(policy, batch_size=None, signatures={'action': action_fn})
 
 # Save the policy
 policy_dir = "/tmp/policy_saver_test"
