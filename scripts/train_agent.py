@@ -111,20 +111,24 @@ time_step_placeholder = tf.nest.map_structure(
 policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None)
 
 # Register the 'action' method as a concrete function
+print(f"Registering 'action' method as a concrete function with time_step_placeholder: {time_step_placeholder}")
 action_fn = agent.policy.action.get_concrete_function(time_step_placeholder)
 policy_saver.register_concrete_function('action', action_fn)
+print(f"'action' method registered as a concrete function: {action_fn}")
 
 # Ensure the 'action' method is a callable TensorFlow graph
-assert callable(
-    agent.policy.action
-), "The 'action' method of the policy is not callable."
-print(
-    f"The 'action' method of the policy is a callable TensorFlow graph: {agent.policy.action}"
-)
+assert callable(agent.policy.action), "The 'action' method of the policy is not callable."
+print(f"The 'action' method of the policy is a callable TensorFlow graph: {agent.policy.action}")
+
+# Debugging: Print the policy's collect_data_spec
+print(f"Policy's collect_data_spec: {agent.collect_data_spec}")
 
 # Save the policy using PolicySaver
+print(f"Saving policy using PolicySaver in directory: {POLICY_DIR}")
 policy_saver.save(POLICY_DIR)
 print(f"Policy saved successfully in {POLICY_DIR}")
+
+# Load the saved policy and check signatures
 saved_policy = tf.compat.v2.saved_model.load(POLICY_DIR)
 print(f"Signatures of the saved model: {saved_policy.signatures}")
 if "action" in saved_policy.signatures:
@@ -133,6 +137,7 @@ else:
     print("The 'action' method is not present in the saved model signatures.")
     # Additional debugging: Print the available methods in the saved model
     print(f"Available methods in saved policy: {dir(saved_policy)}")
+
 # Additional debugging: Print the policy's signatures immediately after saving
 print(f"Policy signatures immediately after saving: {policy_saver.policy.signatures}")
 
