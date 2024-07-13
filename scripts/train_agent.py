@@ -202,11 +202,13 @@ try:
             else:
                 print("The loaded policy does NOT have an 'action' method.")
                 print(
-                    f"Available attributes of the loaded policy object: {dir(loaded_policy)}"
+                    "Available attributes of the loaded policy object: "
+                    f"{dir(loaded_policy)}"
                 )
         except Exception as e:
             print(
-                f"Error loading the saved policy or calling the 'action' method: {e}"
+                "Error loading the saved policy or calling the 'action' method: "
+                f"{e}"
             )
     except Exception as e:
         print(f"Error saving policy: {e}")
