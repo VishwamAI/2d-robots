@@ -62,6 +62,10 @@ try:
         else:
             print("The 'action' method is NOT present in the policy "
                   "signatures.")
+        # Additional debugging information
+        print(f"Policy type: {type(policy)}")
+        print(f"Policy object dir: {dir(policy)}")
+        print(f"Policy object repr: {repr(policy)}")
 except Exception as e:
     print(f"Exception details: {e}")
     raise RuntimeError(
