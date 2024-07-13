@@ -123,9 +123,18 @@ signatures = {'action': action_fn}
 policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None, signatures=signatures)
 print(f"Policy signatures immediately after registering 'action': {policy_saver.policy.signatures}")
 
+# Debugging: Print the policy object and its attributes before saving
+print(f"Policy object before saving: {agent.policy}")
+print(f"Attributes of policy object before saving: {dir(agent.policy)}")
+print(f"Policy signatures before saving: {policy_saver.policy.signatures}")
+
+# Ensure the 'action' method is included in the policy signatures
+signatures = {'action': action_fn}
+policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None, signatures=signatures)
+print(f"Policy signatures immediately after registering 'action': {policy_saver.policy.signatures}")
+
 # Debugging: Print the policy's signatures immediately after registration
 print(f"Policy signatures immediately after registration: {policy_saver.policy.signatures}")
-
 # Ensure the 'action' method is a callable TensorFlow graph
 assert callable(agent.policy.action), "The 'action' method of the policy is not callable."
 print(f"The 'action' method of the policy is a callable TensorFlow graph: {agent.policy.action}")
