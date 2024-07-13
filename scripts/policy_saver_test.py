@@ -15,8 +15,17 @@ env = tf_py_environment.TFPyEnvironment(train_py_env)
 # Assuming 'env' is already defined and initialized
 policy = random_tf_policy.RandomTFPolicy(env.time_step_spec(), env.action_spec())
 
+# Register the 'action' method as a concrete function
+time_step_spec = policy.time_step_spec
+time_step_placeholder = tf.nest.map_structure(
+    lambda spec: tf.TensorSpec(shape=[None] + list(spec.shape), dtype=spec.dtype),
+    time_step_spec,
+)
+action_fn = policy.action.get_concrete_function(time_step_placeholder)
+
 # Initialize the PolicySaver with the 'action' method included in the signatures
-policy_saver = PolicySaver(policy, batch_size=None)
+signatures = {'action': action_fn}
+policy_saver = PolicySaver(policy, batch_size=None, signatures=signatures)
 
 # Save the policy
 policy_dir = "/tmp/policy_saver_test"
