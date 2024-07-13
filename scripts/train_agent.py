@@ -173,7 +173,8 @@ saved_policy = tf.compat.v2.saved_model.load(POLICY_DIR)
 print(f"Signatures of the saved model: {saved_policy.signatures}")
 if "action" in saved_policy.signatures:
     print(
-        f"'action' method signature: {saved_policy.signatures['action']}"
+        f"'action' method signature: "
+        f"{saved_policy.signatures['action']}"
     )
 else:
     print("The 'action' method is not present in the saved model signatures.")
