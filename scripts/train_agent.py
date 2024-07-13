@@ -188,14 +188,14 @@ try:
         # network
         experience, _ = next(iterator)
         observations = experience.observation
-        print(
-            f"Observations shape: {observations.shape}\n"
-            f"Batched observations shape: {batched_observations.shape}"
-        )
         # Ensure observations have a batch dimension
         batched_observations = tf.nest.map_structure(
             lambda x: tf.expand_dims(x, axis=0) if len(x.shape) == 1 else x,
             observations,
+        )
+        print(
+            f"Observations shape: {observations.shape}\n"
+            f"Batched observations shape: {batched_observations.shape}"
         )
         # Ensure observations have the correct shape expected by the QNetwork
         batched_observations = tf.nest.map_structure(
