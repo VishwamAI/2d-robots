@@ -128,10 +128,7 @@ try:
             print("step = {0}: Average Return = {1}".format(step, avg_return))
 
         # Attempt to save the policy more frequently for debugging purposes
-        print(
-            f"Attempting to save policy at step {step} in directory "
-            f"{POLICY_DIR}"
-        )
+        print(f"Attempting to save policy at step {step} in directory " f"{POLICY_DIR}")
         if not os.path.exists(POLICY_DIR):
             try:
                 os.makedirs(POLICY_DIR)
@@ -158,8 +155,7 @@ try:
                 print("The 'action' signature is present in the saved model.")
             except Exception as e:
                 print(
-                    "Error verifying the 'action' signature in the saved model: "
-                    f"{e}"
+                    "Error verifying the 'action' signature in the saved model: " f"{e}"
                 )
         except Exception as e:
             print(f"Error saving policy at step {step}: {e}")
@@ -189,10 +185,7 @@ try:
                 )
             print("The 'action' signature is present in the saved model.")
         except Exception as e:
-            print(
-                "Error verifying the 'action' signature in the saved model: "
-                f"{e}"
-            )
+            print("Error verifying the 'action' signature in the saved model: " f"{e}")
 
         # Attempt to load the saved policy and call the 'action' method
         try:
@@ -207,8 +200,7 @@ try:
                 )
         except Exception as e:
             print(
-                "Error loading the saved policy or calling the 'action' method: "
-                f"{e}"
+                "Error loading the saved policy or calling the 'action' method: " f"{e}"
             )
     except Exception as e:
         print(f"Error saving policy: {e}")
