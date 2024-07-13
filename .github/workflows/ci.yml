@@ -22,13 +22,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install 'numpy>=1.22,<1.24.3'
-        pip install tensorflow==2.12.0
-        pip install tf-agents==0.11.0
-        pip install tensorflow-probability==0.19.0
-        pip install keras==2.12.0
-        pip install flake8
-        pip install pytest
+        pip install -r requirements.txt
 
     - name: Lint with flake8
       run: |
