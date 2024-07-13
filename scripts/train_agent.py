@@ -172,13 +172,14 @@ try:
             ).read()
             if 'action' not in saved_model_cli_output:
                 raise RuntimeError(
-                    f"The 'action' signature is not present in the saved model at "
+                    "The 'action' signature is not present in the saved model at "
                     f"{policy_dir}"
                 )
             print("The 'action' signature is present in the saved model.")
         except Exception as e:
             print(
-                f"Error verifying the 'action' signature in the saved model: {e}"
+                "Error verifying the 'action' signature in the saved model: "
+                f"{e}"
             )
     except Exception as e:
         print(
