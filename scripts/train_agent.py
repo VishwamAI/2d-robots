@@ -278,8 +278,7 @@ try:
                     )
                 print(
                     f"Contents of policy directory '{policy_dir}' after saving: "
-                    f"{os.listdir(policy_dir)}"
-                )
+                    f"{os.listdir(policy_dir)}")
                 # Debugging: Print the saved model object after loading
                 print(f"Saved model object after loading: {saved_policy}")
                 print(
