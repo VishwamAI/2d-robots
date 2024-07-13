@@ -1,6 +1,7 @@
 import os
 import sys
 import tensorflow as tf
+import tensorflow_probability as tfp
 
 # Append the src directory to the Python path
 sys.path.append(
@@ -29,6 +30,16 @@ print(f"Contents of policy directory '{policy_dir}': {os.listdir(policy_dir)}")
 
 # Print the TensorFlow version for debugging
 print(f"TensorFlow version: {tf.__version__}")
+
+# Print the TensorFlow Probability version for debugging
+print(f"TensorFlow Probability version: {tfp.__version__}")
+
+# Check if the 'distributions' module is accessible
+try:
+    Distribution = tfp.distributions.Distribution
+    print("TensorFlow Probability 'distributions' module is accessible.")
+except AttributeError as e:
+    print(f"Error accessing 'distributions' module: {e}")
 
 try:
     policy = py_tf_eager_policy.SavedModelPyTFEagerPolicy(
