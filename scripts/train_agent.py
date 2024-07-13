@@ -139,26 +139,17 @@ print(
 # Debugging: Print the policy object and its attributes before saving
 print(f"Policy object before saving: {agent.policy}")
 print(f"Attributes of policy object before saving: {dir(agent.policy)}")
-print(f"Policy signatures before saving: {policy_saver.policy.signatures}")
-
-# Ensure the 'action' method is included in the policy signatures
-signatures = {'action': action_fn}
-policy_saver = policy_saver.PolicySaver(
-    agent.policy, batch_size=None, signatures=signatures
-)
 print(
-    f"Policy signatures immediately after registering 'action': "
-    f"{policy_saver.policy.signatures}"
-)
-
-# Debugging: Print the policy's signatures immediately after registration
-print(
-    f"Policy signatures immediately after registration: {policy_saver.policy.signatures}")
+    f"Policy signatures immediately after registration: "
+    f"{policy_saver.policy.signatures}")
 # Ensure the 'action' method is a callable TensorFlow graph
 assert callable(
-    agent.policy.action), "The 'action' method of the policy is not callable."
+    agent.policy.action
+), "The 'action' method of the policy is not callable."
 print(
-    f"The 'action' method of the policy is a callable TensorFlow graph: {agent.policy.action}")
+    f"The 'action' method of the policy is a callable TensorFlow graph: "
+    f"{agent.policy.action}"
+)
 
 # Debugging: Print the policy's collect_data_spec
 print(f"Policy's collect_data_spec: {agent.collect_data_spec}")
@@ -197,7 +188,10 @@ try:
         # network
         experience, _ = next(iterator)
         observations = experience.observation
-        print(f"Shape of observations: {tf.shape(observations)}")
+        print(
+            f"Observations shape: {observations.shape}\n"
+            f"Batched observations shape: {batched_observations.shape}"
+        )
         # Ensure observations have a batch dimension
         batched_observations = tf.nest.map_structure(
             lambda x: tf.expand_dims(x, axis=0) if len(x.shape) == 1 else x,
@@ -209,10 +203,6 @@ try:
                 x, [None] + list(train_env.observation_spec().shape)
             ),
             batched_observations,
-        )
-        print(
-            f"Observations shape: {observations.shape}\n"
-            f"Batched observations shape: {batched_observations.shape}"
         )
         print(
             f"Shape of batched observations: {tf.shape(batched_observations)}")
