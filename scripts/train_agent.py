@@ -121,52 +121,48 @@ try:
             print('step = {0}: Average Return = {1}'.format(step, avg_return))
 
         # Attempt to save the policy more frequently for debugging purposes
-        if step % (eval_interval // 10) == 0:
-            policy_dir = POLICY_DIR
-            print(
-                f"Attempting to save policy at step {step} in directory "
-                f"{policy_dir}"
-            )
-            if not os.path.exists(policy_dir):
-                try:
-                    os.makedirs(policy_dir)
-                    print(
-                        f"Directory {policy_dir} created successfully."
-                    )
-                except Exception as e:
-                    print(
-                        f"Error creating directory {policy_dir}: {e}"
-                    )
+        print(
+            f"Attempting to save policy at step {step} in directory {policy_dir}"
+        )
+        if not os.path.exists(policy_dir):
             try:
-                policy_saver.save(policy_dir)
+                os.makedirs(policy_dir)
                 print(
-                    f"Policy saved successfully in {policy_dir} at step "
-                    f"{step}"
+                    f"Directory {policy_dir} created successfully."
                 )
-
-                # Verify that the 'action' signature is present in the saved model
-                try:
-                    saved_model_cli_output = os.popen(
-                        f"saved_model_cli show --dir {policy_dir} --all"
-                    ).read()
-                    if 'action' not in saved_model_cli_output:
-                        raise RuntimeError(
-                            (
-                                "The 'action' signature is not present in the saved model at "
-                                f"{policy_dir}. Please ensure that the model is saved "
-                                "correctly."
-                            )
-                        )
-                    print("The 'action' signature is present in the saved model.")
-                except Exception as e:
-                    print(
-                        "Error verifying the 'action' signature in the saved model: "
-                        f"{e}"
-                    )
             except Exception as e:
                 print(
-                    f"Error saving policy at step {step}: {e}"
+                    f"Error creating directory {policy_dir}: {e}"
                 )
+        try:
+            policy_saver.save(policy_dir)
+            print(
+                f"Policy saved successfully in {policy_dir} at step {step}"
+            )
+
+            # Verify that the 'action' signature is present in the saved model
+            try:
+                saved_model_cli_output = os.popen(
+                    f"saved_model_cli show --dir {policy_dir} --all"
+                ).read()
+                if 'action' not in saved_model_cli_output:
+                    raise RuntimeError(
+                        (
+                            "The 'action' signature is not present in the saved model at "
+                            f"{policy_dir}. Please ensure that the model is saved "
+                            "correctly."
+                        )
+                    )
+                print("The 'action' signature is present in the saved model.")
+            except Exception as e:
+                print(
+                    "Error verifying the 'action' signature in the saved model: "
+                    f"{e}"
+                )
+        except Exception as e:
+            print(
+                f"Error saving policy at step {step}: {e}"
+            )
 
     # Final save of the trained policy
     policy_dir = POLICY_DIR
