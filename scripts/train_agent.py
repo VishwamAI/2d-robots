@@ -156,6 +156,11 @@ else:
     print("The 'action' method is not present in the saved model signatures.")
     # Additional debugging: Print the available methods in the saved model
     print(f"Available methods in saved policy: {dir(saved_policy)}")
+    # Additional debugging: Print the concrete function for 'action' method
+    if hasattr(saved_policy, 'action'):
+        print(f"Concrete function for 'action' method: {saved_policy.action}")
+    else:
+        print("The 'action' method is not available as a concrete function.")
 
 # Additional debugging: Print the policy's signatures immediately after saving
 print(f"Policy signatures immediately after saving: {policy_saver.policy.signatures}")
