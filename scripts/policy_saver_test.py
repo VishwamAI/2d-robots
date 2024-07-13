@@ -27,8 +27,8 @@ time_step_placeholder = tf.nest.map_structure(
 def action_fn(time_step):
     return policy.action(time_step)
 
-# Initialize the PolicySaver with the 'signatures' argument
-policy_saver = PolicySaver(policy, batch_size=None, signatures={'action': action_fn})
+# Initialize the PolicySaver without the 'signatures' argument
+policy_saver = PolicySaver(policy, batch_size=None)
 
 # Save the policy
 policy_dir = "/tmp/policy_saver_test"
