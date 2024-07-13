@@ -1,19 +1,3 @@
-import sys
-sys.path.append('/home/ubuntu/2D-birds')
-from src.environment import BirdRobotEnvironment
-import os
-import tensorflow as tf
-import tf_agents
-from tf_agents.environments import tf_py_environment
-from tf_agents.policies import random_tf_policy
-from tf_agents.utils import common
-from tf_agents.agents.dqn import dqn_agent
-from tf_agents.networks import q_network
-from tf_agents.replay_buffers import tf_uniform_replay_buffer
-from tf_agents.drivers import dynamic_step_driver
-from tf_agents.metrics import tf_metrics
-from tf_agents.eval import metric_utils
-from tf_agents.policies import policy_saver
 from config.config import (
     NUM_ITERATIONS,
     COLLECT_STEPS_PER_ITERATION,
@@ -21,6 +5,22 @@ from config.config import (
     EVAL_INTERVAL,
     POLICY_DIR,
 )
+from tf_agents.policies import policy_saver
+from tf_agents.eval import metric_utils
+from tf_agents.metrics import tf_metrics
+from tf_agents.drivers import dynamic_step_driver
+from tf_agents.replay_buffers import tf_uniform_replay_buffer
+from tf_agents.networks import q_network
+from tf_agents.agents.dqn import dqn_agent
+from tf_agents.utils import common
+from tf_agents.policies import random_tf_policy
+from tf_agents.environments import tf_py_environment
+import tf_agents
+import tensorflow as tf
+import os
+from src.environment import BirdRobotEnvironment
+import sys
+sys.path.append('/home/ubuntu/2D-birds')
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 print("TF-Agents version:", tf_agents.__version__)
@@ -104,14 +104,21 @@ eval_interval = EVAL_INTERVAL
 # Create a placeholder TimeStep object using the spec provided by time_step_spec
 time_step_spec = agent.policy.time_step_spec
 time_step_placeholder = tf.nest.map_structure(
-    lambda spec: tf.TensorSpec(shape=[None] + list(spec.shape), dtype=spec.dtype),
+    lambda spec: tf.TensorSpec(
+        shape=[None] + list(spec.shape), dtype=spec.dtype
+    ),
     time_step_spec,
 )
 
 # Register the 'action' method as a concrete function
-print(f"Registering 'action' method as a concrete function with time_step_placeholder: {time_step_placeholder}")
+print(
+    f"Registering 'action' method as a concrete function with "
+    f"time_step_placeholder: {time_step_placeholder}"
+)
 try:
-    action_fn = agent.policy.action.get_concrete_function(time_step_placeholder)
+    action_fn = agent.policy.action.get_concrete_function(
+        time_step_placeholder
+    )
     print(f"'action' method registered as a concrete function: {action_fn}")
 except AttributeError as e:
     print(f"AttributeError: {e}")
@@ -120,8 +127,13 @@ except AttributeError as e:
 
 # Ensure the 'action' method is included in the policy signatures
 signatures = {'action': action_fn}
-policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None, signatures=signatures)
-print(f"Policy signatures immediately after registering 'action': {policy_saver.policy.signatures}")
+policy_saver = policy_saver.PolicySaver(
+    agent.policy, batch_size=None, signatures=signatures
+)
+print(
+    f"Policy signatures immediately after registering 'action': "
+    f"{policy_saver.policy.signatures}"
+)
 
 # Debugging: Print the policy object and its attributes before saving
 print(f"Policy object before saving: {agent.policy}")
@@ -130,14 +142,22 @@ print(f"Policy signatures before saving: {policy_saver.policy.signatures}")
 
 # Ensure the 'action' method is included in the policy signatures
 signatures = {'action': action_fn}
-policy_saver = policy_saver.PolicySaver(agent.policy, batch_size=None, signatures=signatures)
-print(f"Policy signatures immediately after registering 'action': {policy_saver.policy.signatures}")
+policy_saver = policy_saver.PolicySaver(
+    agent.policy, batch_size=None, signatures=signatures
+)
+print(
+    f"Policy signatures immediately after registering 'action': "
+    f"{policy_saver.policy.signatures}"
+)
 
 # Debugging: Print the policy's signatures immediately after registration
-print(f"Policy signatures immediately after registration: {policy_saver.policy.signatures}")
+print(
+    f"Policy signatures immediately after registration: {policy_saver.policy.signatures}")
 # Ensure the 'action' method is a callable TensorFlow graph
-assert callable(agent.policy.action), "The 'action' method of the policy is not callable."
-print(f"The 'action' method of the policy is a callable TensorFlow graph: {agent.policy.action}")
+assert callable(
+    agent.policy.action), "The 'action' method of the policy is not callable."
+print(
+    f"The 'action' method of the policy is a callable TensorFlow graph: {agent.policy.action}")
 
 # Debugging: Print the policy's collect_data_spec
 print(f"Policy's collect_data_spec: {agent.collect_data_spec}")
@@ -163,7 +183,8 @@ else:
         print("The 'action' method is not available as a concrete function.")
 
 # Additional debugging: Print the policy's signatures immediately after saving
-print(f"Policy signatures immediately after saving: {policy_saver.policy.signatures}")
+print(
+    f"Policy signatures immediately after saving: {policy_saver.policy.signatures}")
 
 # Training loop
 try:
@@ -191,16 +212,19 @@ try:
             f"Observations shape: {observations.shape}\n"
             f"Batched observations shape: {batched_observations.shape}"
         )
-        print(f"Shape of batched observations: {tf.shape(batched_observations)}")
+        print(
+            f"Shape of batched observations: {tf.shape(batched_observations)}")
         print(f"QNetwork input spec: {q_net.input_tensor_spec}")
         with tf.GradientTape() as tape:
             # Ensure the input to the QNetwork has the correct shape
             q_values, _ = q_net(batched_observations, training=True)
             # Use batched observations for loss calculation
             loss = agent._loss(experience)
-            print(f"Shape of input to QNetwork: {tf.shape(batched_observations)}")
+            print(
+                f"Shape of input to QNetwork: {tf.shape(batched_observations)}")
         gradients = tape.gradient(loss, agent.trainable_variables)
-        agent._optimizer.apply_gradients(zip(gradients, agent.trainable_variables))
+        agent._optimizer.apply_gradients(
+            zip(gradients, agent.trainable_variables))
         train_loss = loss
 
         step = agent.train_step_counter.numpy()
@@ -222,7 +246,8 @@ try:
         # Periodic save of the policy
         if step % (eval_interval // 10) == 0:
             policy_dir = POLICY_DIR
-            print(f"Attempting to save policy at step {step} in directory {policy_dir}")
+            print(
+                f"Attempting to save policy at step {step} in directory {policy_dir}")
             if not os.path.exists(policy_dir):
                 try:
                     os.makedirs(policy_dir)
@@ -233,22 +258,29 @@ try:
                 # Debugging: Print the policy object before saving
                 print(f"Policy object before saving: {agent.policy}")
                 policy_saver.save(policy_dir)
-                print(f"Policy saved successfully in {policy_dir} at step {step}")
+                print(
+                    f"Policy saved successfully in {policy_dir} at step {step}")
                 saved_policy = tf.compat.v2.saved_model.load(policy_dir)
-                print(f"Signatures of the saved model: {saved_policy.signatures}")
+                print(
+                    f"Signatures of the saved model: {saved_policy.signatures}")
                 if "action" in saved_policy.signatures:
-                    print(f"'action' method signature: {saved_policy.signatures['action']}")
+                    print(
+                        f"'action' method signature: {saved_policy.signatures['action']}")
                 else:
-                    print("The 'action' method is not present in the saved model signatures.")
+                    print(
+                        "The 'action' method is not present in the saved model signatures.")
                     # Additional debugging: Print the available methods in the saved model
-                    print(f"Available methods in saved policy: {dir(saved_policy)}")
+                    print(
+                        f"Available methods in saved policy: {dir(saved_policy)}")
                 print(
                     f"Contents of policy directory '{policy_dir}' after saving: {os.listdir(policy_dir)}"
                 )
                 # Debugging: Print the saved model object after loading
                 print(f"Saved model object after loading: {saved_policy}")
-                print(f"Attributes of saved policy object: {dir(saved_policy)}")
-                print(f"Signatures of the loaded policy: {saved_policy.signatures}")
+                print(
+                    f"Attributes of saved policy object: {dir(saved_policy)}")
+                print(
+                    f"Signatures of the loaded policy: {saved_policy.signatures}")
                 if "action" in saved_policy.signatures:
                     print(
                         f"'action' method signature: {saved_policy.signatures['action']}"
@@ -258,7 +290,8 @@ try:
                         "The 'action' method is not present in the saved policy signatures."
                     )
                     # Additional debugging: Print the available methods in the saved policy
-                    print(f"Available methods in saved policy: {dir(saved_policy)}")
+                    print(
+                        f"Available methods in saved policy: {dir(saved_policy)}")
                     # Additional debugging: Print the concrete function for 'action' method
             except Exception as e:
                 print(f"Error saving policy at step {step}: {e}")
@@ -279,7 +312,8 @@ try:
         print(f"Attributes of the saved model: {dir(saved_model)}")
         # Debugging: Print the 'action' method of the saved model
         if "action" in saved_model.signatures:
-            print(f"'action' method signature: {saved_model.signatures['action']}")
+            print(
+                f"'action' method signature: {saved_model.signatures['action']}")
         else:
             print("The 'action' method is not present in the saved model signatures.")
             # Additional debugging: Print the available methods in the saved model
@@ -293,7 +327,8 @@ except Exception as e:
 # Debugging: Confirm 'action' method in policy signatures
 saved_policy = tf.compat.v2.saved_model.load(policy_dir)
 if "action" in saved_policy.signatures:
-    print(f"'action' method is in policy signatures: {saved_policy.signatures['action']}")
+    print(
+        f"'action' method is in policy signatures: {saved_policy.signatures['action']}")
 else:
     print("'action' method is NOT in policy signatures")
 
@@ -303,7 +338,8 @@ print("Debugging - Signatures after saving:", saved_policy.signatures)
 # Debugging: Confirm 'action' method in policy signatures
 saved_policy = tf.compat.v2.saved_model.load(policy_dir)
 if 'action' in saved_policy.signatures:
-    print(f"'action' method is in policy signatures: {saved_policy.signatures['action']}")
+    print(
+        f"'action' method is in policy signatures: {saved_policy.signatures['action']}")
 else:
     print("'action' method is NOT in policy signatures")
 
