@@ -174,7 +174,8 @@ try:
                 raise RuntimeError(
                     (
                         "The 'action' signature is not present in the saved model at "
-                        f"{policy_dir}. Please ensure that the model is saved correctly."
+                        f"{policy_dir}. Please ensure that the model is saved "
+                        "correctly."
                     )
                 )
             print("The 'action' signature is present in the saved model.")
