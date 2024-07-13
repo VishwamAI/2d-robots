@@ -5,14 +5,13 @@ from tf_agents.environments import tf_py_environment
 from tf_agents.utils import common
 from tf_agents.agents.dqn import dqn_agent
 from tf_agents.networks import q_network
+from environment import BirdRobotEnvironment
+from config import POLICY_DIR
 
 # Append the src directory to the Python path
 sys.path.append(
     os.path.join(os.path.dirname(__file__), '..', 'src')
 )  # noqa: E402
-
-from environment import BirdRobotEnvironment
-from config import POLICY_DIR
 
 # Set up the environment
 train_py_env = BirdRobotEnvironment()
