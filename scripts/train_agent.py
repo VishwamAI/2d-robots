@@ -164,6 +164,19 @@ try:
         print(
             f"Policy saved successfully in {policy_dir}"
         )
+
+        # Verify that the 'action' signature is present in the saved model
+        try:
+            saved_model_cli_output = os.popen(f"saved_model_cli show --dir {policy_dir} --all").read()
+            if 'action' not in saved_model_cli_output:
+                raise RuntimeError(
+                    f"The 'action' signature is not present in the saved model at {policy_dir}"
+                )
+            print("The 'action' signature is present in the saved model.")
+        except Exception as e:
+            print(
+                f"Error verifying the 'action' signature in the saved model: {e}"
+            )
     except Exception as e:
         print(
             f"Error saving policy: {e}"
