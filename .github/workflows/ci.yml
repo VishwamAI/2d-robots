@@ -26,7 +26,7 @@ jobs:
         pip install tensorflow==2.13.1
         pip install tf-agents==0.17.0
         pip install tensorflow-probability==0.20.1
-        pip install keras>=2.13.0,<2.14
+        pip install 'keras>=2.13.0,<2.14'
         pip install flake8
         pip install pytest
         pip show tensorflow tensorflow-probability
