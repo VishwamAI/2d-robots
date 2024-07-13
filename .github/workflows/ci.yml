@@ -19,7 +19,6 @@ jobs:
       run: |
         python -m venv venv
         source venv/bin/activate
-        pip install tensorflow==2.13.1
         pip install -r requirements.txt
         pip show tensorflow tensorflow-probability
 

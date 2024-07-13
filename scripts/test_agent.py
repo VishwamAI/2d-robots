@@ -1,5 +1,6 @@
 import os
 import sys
+import tensorflow as tf
 
 # Append the src directory to the Python path
 sys.path.append(
@@ -25,6 +26,9 @@ if not os.path.exists(policy_dir):
 
 # Print the contents of the policy directory for debugging
 print(f"Contents of policy directory '{policy_dir}': {os.listdir(policy_dir)}")
+
+# Print the TensorFlow version for debugging
+print(f"TensorFlow version: {tf.__version__}")
 
 try:
     policy = py_tf_eager_policy.SavedModelPyTFEagerPolicy(
