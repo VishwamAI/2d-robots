@@ -1,11 +1,17 @@
+import os
+import sys
 import tensorflow as tf
+import tensorflow_probability as tfp
+
+# Append the src directory to the Python path
+sys.path.append(
+    os.path.join(os.path.dirname(__file__), '..', 'src')
+)  # noqa: E402
+
 from tf_agents.environments import tf_py_environment
 from tf_agents.policies import py_tf_eager_policy
-from tf_agents.trajectories import time_step as ts
-import numpy as np
-from ..src.environment import BirdRobotEnvironment
-from config import POLICY_DIR
-import os
+from environment import BirdRobotEnvironment
+from config.config import POLICY_DIR
 
 # Create the environment
 eval_py_env = BirdRobotEnvironment()
@@ -14,13 +20,57 @@ eval_env = tf_py_environment.TFPyEnvironment(eval_py_env)
 # Load the trained policy
 policy_dir = POLICY_DIR
 if not os.path.exists(policy_dir):
-    raise FileNotFoundError(f"Policy directory '{policy_dir}' does not exist. Please ensure the model is trained and saved correctly.")
+    raise FileNotFoundError(
+        f"Policy directory '{policy_dir}' does not exist. "
+        "Please ensure the model is trained and saved correctly."
+    )
+
+# Print the contents of the policy directory for debugging
+print(f"Contents of policy directory '{policy_dir}': {os.listdir(policy_dir)}")
+
+# Print the TensorFlow version for debugging
+print(f"TensorFlow version: {tf.__version__}")
+
+# Print the TensorFlow Probability version for debugging
+print(f"TensorFlow Probability version: {tfp.__version__}")
+
+# Check if the 'distributions' module is accessible
+try:
+    Distribution = tfp.distributions.Distribution
+    print("TensorFlow Probability 'distributions' module is accessible.")
+except AttributeError as e:
+    print(f"Error accessing 'distributions' module: {e}")
 
 try:
-    saved_policy = tf.compat.v2.saved_model.load(policy_dir)
-    policy = py_tf_eager_policy.SavedModelPyTFEagerPolicy(saved_policy, time_step_spec=eval_env.time_step_spec())
+    policy = py_tf_eager_policy.SavedModelPyTFEagerPolicy(
+        policy_dir,
+        time_step_spec=eval_env.time_step_spec(),
+        action_spec=eval_env.action_spec()
+    )
+    if hasattr(policy, 'action'):
+        print("The loaded policy has an 'action' method.")
+    else:
+        print("The loaded policy does NOT have an 'action' method.")
+        print(f"Available attributes of the policy object: {dir(policy)}")
+        # Print the details of the policy object for debugging
+        print(f"Policy object details: {policy}")
+        # Print the signatures of the loaded policy
+        print(f"Policy signatures: {policy.signatures}")
+        # Attempt to retrieve the concrete function for 'action'
+        if 'action' in policy.signatures:
+            print("The 'action' method is present in the policy signatures.")
+        else:
+            print("The 'action' method is NOT present in the policy "
+                  "signatures.")
+        # Additional debugging information
+        print(f"Policy type: {type(policy)}")
+        print(f"Policy object dir: {dir(policy)}")
+        print(f"Policy object repr: {repr(policy)}")
 except Exception as e:
-    raise RuntimeError(f"Error loading policy from '{policy_dir}': {e}")
+    print(f"Exception details: {e}")
+    raise RuntimeError(
+        f"Error loading policy from '{policy_dir}': {e}"
+    )
 
 # Run a few episodes and print the results
 num_episodes = 10
@@ -33,4 +83,7 @@ for _ in range(num_episodes):
         time_step = eval_env.step(action_step.action)
         episode_return += time_step.reward
 
-    print('Episode return: {}'.format(episode_return))
+    print(f'Episode return: {episode_return}')
+
+# New debugging statement to confirm changes
+print("Debugging statement: End of script reached.")

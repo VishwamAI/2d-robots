@@ -1,6 +1,8 @@
-numpy
+numpy>=1.22,<1.24.3
 gym
-tensorflow
-tf-agents
+tensorflow==2.13.1
+tf-agents==0.17.0
+tensorflow-probability==0.20.1
+keras>=2.13.0,<2.14
 flake8
 pytest
