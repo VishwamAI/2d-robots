@@ -1,4 +1,5 @@
 import pytest
+import random
 from unittest.mock import Mock, patch
 import numpy as np
 import matplotlib.pyplot as plt
@@ -8,7 +9,8 @@ import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from integrate_shapes_robots import HumanShapeGenerator, Custom3DRobotEnv, DQNAgent, train_agent
+from integrate_shapes_robots import HumanShapeGenerator, Custom3DRobotEnv, train_agent, visualize_training, save_model
+from walking_agents.walking_agent import DQNAgent
 
 def test_human_shape_generator():
     generator = HumanShapeGenerator()
@@ -49,7 +51,9 @@ def test_dqn_agent():
 
 @patch('integrate_shapes_robots.Custom3DRobotEnv')
 @patch('integrate_shapes_robots.DQNAgent')
-def test_training_loop(mock_agent_class, mock_env_class):
+@patch('integrate_shapes_robots.visualize_training')
+@patch('integrate_shapes_robots.save_model')
+def test_training_loop(mock_save_model, mock_visualize, mock_agent_class, mock_env_class):
     mock_env = Mock()
     mock_env.reset.return_value = np.random.rand(64, 64, 64, 3)
     mock_env.step.return_value = (np.random.rand(64, 64, 64, 3), 1.0, False, {})
@@ -57,6 +61,7 @@ def test_training_loop(mock_agent_class, mock_env_class):
 
     mock_agent = Mock()
     mock_agent.act.return_value = np.random.rand(6)
+    mock_agent.epsilon = 0.5
     mock_agent_class.return_value = mock_agent
 
     # Run a short training loop
@@ -67,6 +72,8 @@ def test_training_loop(mock_agent_class, mock_env_class):
     assert mock_agent.act.call_count > 0
     assert mock_agent.remember.call_count > 0
     assert mock_agent.replay.call_count > 0
+    mock_visualize.assert_called_once()
+    mock_save_model.assert_called_once()
 
 def test_agent():
     mock_env = Mock(spec=Custom3DRobotEnv)
@@ -97,6 +104,32 @@ def test_agent():
         result = mock_env.render()
         assert mock_show.called, "plt.show() was not called during rendering"
         assert result == mock_fig, "render method should return the figure object"
+
+@patch('integrate_shapes_robots.plt')
+def test_visualize_training(mock_plt):
+    episodes = list(range(10))
+    scores = [random.random() for _ in range(10)]
+    epsilons = [random.random() for _ in range(10)]
+
+    visualize_training(episodes, scores, epsilons)
+
+    assert mock_plt.figure.call_count == 1
+    assert mock_plt.plot.call_count == 2
+    assert mock_plt.xlabel.call_count == 1
+    assert mock_plt.ylabel.call_count == 2
+    assert mock_plt.legend.call_count == 1
+    assert mock_plt.show.call_count == 1
+
+@patch('integrate_shapes_robots.os.path.join')
+@patch('integrate_shapes_robots.tf.keras.models.save_model')
+def test_save_model(mock_save_model, mock_path_join):
+    mock_model = Mock()
+    mock_path_join.return_value = '/fake/path/model.h5'
+
+    save_model(mock_model, 'test_model')
+
+    mock_path_join.assert_called_once_with('models', 'test_model.h5')
+    mock_save_model.assert_called_once_with(mock_model, '/fake/path/model.h5')
 
 if __name__ == "__main__":
     pytest.main([__file__])
