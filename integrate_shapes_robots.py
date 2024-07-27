@@ -1,11 +1,7 @@
 import gym
 import numpy as np
-import tensorflow as tf
-from tensorflow.keras import layers
 import h5py
 from dmlab2d import Lab2d
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 from typing import Tuple
 from walking_agents.walking_agent import DQNAgent
 
@@ -107,6 +103,8 @@ class Custom3DRobotEnv(gym.Env):
 
     def render(self, mode='human'):
         if mode == 'human':
+            import matplotlib.pyplot as plt
+            from mpl_toolkits.mplot3d import Axes3D
             fig = plt.figure()
             ax = fig.add_subplot(111, projection='3d')
             obs = self._get_observation()
@@ -122,6 +120,9 @@ class Custom3DRobotEnv(gym.Env):
 
 
 def visualize_environment(env, episode_rewards, episode_lengths):
+    import matplotlib.pyplot as plt
+    from mpl_toolkits.mplot3d import Axes3D
+
     # Visualize the 3D environment
     fig = plt.figure(figsize=(10, 10))
     ax = fig.add_subplot(111, projection='3d')
@@ -170,6 +171,10 @@ def visualize_environment(env, episode_rewards, episode_lengths):
     plt.close()
 
 def train_agent(num_episodes):
+    import tensorflow as tf
+    import matplotlib.pyplot as plt
+    from mpl_toolkits.mplot3d import Axes3D
+
     env = Custom3DRobotEnv()
     state_size = env.observation_space.shape
     action_size = env.action_space.shape[0]
@@ -208,10 +213,6 @@ def save_model(model, name):
 
 def main():
     num_episodes = 1000  # Or any other desired number of episodes
-    env = Custom3DRobotEnv()
-    state_size = env.observation_space.shape
-    action_size = env.action_space.shape[0]
-    agent = DQNAgent(state_size, action_size)
     train_agent(num_episodes)
 
 if __name__ == "__main__":
