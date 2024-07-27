@@ -7,17 +7,20 @@ from dmlab2d import Lab2d
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from typing import Tuple
+from walking_agents.walking_agent import DQNAgent
 
 # Load the 3D shapes dataset
 def load_3d_shapes(file_path: str = '/home/ubuntu/3d-shapes/3dshapes.h5') -> Tuple[np.ndarray, np.ndarray]:
-    with h5py.File(file_path, 'r') as f:
-        images = f['images'][:]
-        labels = f['labels'][:]
-    return images, labels
+    try:
+        with h5py.File(file_path, 'r') as f:
+            images = f['images'][:]
+            labels = f['labels'][:]
+        return images, labels
+    except FileNotFoundError:
+        print(f"Warning: 3D shapes file not found at {file_path}. Using dummy data.")
+        return np.zeros((100, 64, 64, 64, 3), dtype=np.uint8), np.zeros((100, 6))
 
-def visualize_training(episodes, scores, epsilons):
-    # Implementation will be added later
-    pass
+
 
 class HumanShapeGenerator:
     def __init__(self):
@@ -49,7 +52,8 @@ class Custom3DRobotEnv(gym.Env):
         self.robot_position = np.zeros(3)
         self.robot_rotation = np.zeros(3)
         self.human_position = np.random.randint(0, 54, size=3)  # Random initial position for human
-        self.images, _ = load_3d_shapes()  # Load the 3D shapes dataset
+        self.images = None
+        self.images, _ = load_3d_shapes()
 
     def reset(self):
         self.state = self.images[np.random.randint(0, len(self.images))]
@@ -115,19 +119,7 @@ class Custom3DRobotEnv(gym.Env):
             plt.show()
         return fig  # Return the figure object for testing purposes
 
-# Define the neural network model for the DQN agent
-def create_model(input_shape, action_space):
-    model = tf.keras.Sequential([
-        layers.Conv3D(32, (3, 3, 3), activation='relu', input_shape=input_shape),
-        layers.MaxPooling3D((2, 2, 2)),
-        layers.Conv3D(64, (3, 3, 3), activation='relu'),
-        layers.MaxPooling3D((2, 2, 2)),
-        layers.Flatten(),
-        layers.Dense(128, activation='relu'),
-        layers.Dense(action_space, activation='tanh')
-    ])
-    model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001), loss='mse')
-    return model
+
 
 def visualize_environment(env, episode_rewards, episode_lengths):
     # Visualize the 3D environment
@@ -214,11 +206,13 @@ def train_agent(num_episodes):
 def save_model(model, name):
     model.save(f"models/{name}.h5")
 
-if __name__ == "__main__":
-    from walking_agents.walking_agent import DQNAgent
+def main():
     num_episodes = 1000  # Or any other desired number of episodes
     env = Custom3DRobotEnv()
     state_size = env.observation_space.shape
     action_size = env.action_space.shape[0]
     agent = DQNAgent(state_size, action_size)
     train_agent(num_episodes)
+
+if __name__ == "__main__":
+    main()
