@@ -4,6 +4,11 @@ import h5py
 from dmlab2d import Lab2d
 from typing import Tuple
 from walking_agents.walking_agent import DQNAgent
+import importlib
+
+def lazy_import(module_name, class_name=None):
+    module = importlib.import_module(module_name)
+    return getattr(module, class_name) if class_name else module
 
 # Load the 3D shapes dataset
 def load_3d_shapes(file_path: str = '/home/ubuntu/3d-shapes/3dshapes.h5') -> Tuple[np.ndarray, np.ndarray]:
@@ -49,7 +54,11 @@ class Custom3DRobotEnv(gym.Env):
         self.robot_rotation = np.zeros(3)
         self.human_position = np.random.randint(0, 54, size=3)  # Random initial position for human
         self.images = None
-        self.images, _ = load_3d_shapes()
+        self._load_shapes()
+
+    def _load_shapes(self):
+        if self.images is None:
+            self.images, _ = load_3d_shapes()
 
     def reset(self):
         self.state = self.images[np.random.randint(0, len(self.images))]
@@ -103,8 +112,8 @@ class Custom3DRobotEnv(gym.Env):
 
     def render(self, mode='human'):
         if mode == 'human':
-            import matplotlib.pyplot as plt
-            from mpl_toolkits.mplot3d import Axes3D
+            plt = lazy_import('matplotlib.pyplot')
+            Axes3D = lazy_import('mpl_toolkits.mplot3d', 'Axes3D')
             fig = plt.figure()
             ax = fig.add_subplot(111, projection='3d')
             obs = self._get_observation()
@@ -120,8 +129,8 @@ class Custom3DRobotEnv(gym.Env):
 
 
 def visualize_environment(env, episode_rewards, episode_lengths):
-    import matplotlib.pyplot as plt
-    from mpl_toolkits.mplot3d import Axes3D
+    plt = lazy_import('matplotlib.pyplot')
+    Axes3D = lazy_import('mpl_toolkits.mplot3d', 'Axes3D')
 
     # Visualize the 3D environment
     fig = plt.figure(figsize=(10, 10))
@@ -171,9 +180,9 @@ def visualize_environment(env, episode_rewards, episode_lengths):
     plt.close()
 
 def train_agent(num_episodes):
-    import tensorflow as tf
-    import matplotlib.pyplot as plt
-    from mpl_toolkits.mplot3d import Axes3D
+    tf = lazy_import('tensorflow')
+    plt = lazy_import('matplotlib.pyplot')
+    Axes3D = lazy_import('mpl_toolkits.mplot3d', 'Axes3D')
 
     env = Custom3DRobotEnv()
     state_size = env.observation_space.shape
