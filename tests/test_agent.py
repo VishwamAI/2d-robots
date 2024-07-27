@@ -1,89 +1,102 @@
+import pytest
+from unittest.mock import Mock, patch
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Append the project root directory to the Python path
 import os
 import sys
-import tensorflow as tf
-import tensorflow_probability as tfp
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# Append the src directory to the Python path
-sys.path.append(
-    os.path.join(os.path.dirname(__file__), '..', 'src')
-)  # noqa: E402
+from integrate_shapes_robots import HumanShapeGenerator, Custom3DRobotEnv, DQNAgent, train_agent
 
-from tf_agents.environments import tf_py_environment
-from tf_agents.policies import py_tf_eager_policy
-from src.environment import BirdRobotEnvironment
-from config.config import POLICY_DIR
+def test_human_shape_generator():
+    generator = HumanShapeGenerator()
+    shape = generator.generate()
+    assert shape.shape == (10, 5, 2, 3)  # 3D shape with color channels
+    assert np.any(shape > 0)  # Ensure the shape is not empty
 
-# Create the environment
-eval_py_env = BirdRobotEnvironment()
-eval_env = tf_py_environment.TFPyEnvironment(eval_py_env)
+@patch('integrate_shapes_robots.Custom3DRobotEnv')
+def test_custom_3d_robot_env(mock_env):
+    mock_env.return_value.reset.return_value = np.zeros((64, 64, 64, 3))
+    mock_env.return_value.step.return_value = (np.zeros((64, 64, 64, 3)), 1.0, False, {})
+    mock_env.return_value.action_space.sample.return_value = np.zeros(6)
 
-# Load the trained policy
-policy_dir = POLICY_DIR
-if not os.path.exists(policy_dir):
-    raise FileNotFoundError(
-        f"Policy directory '{policy_dir}' does not exist. "
-        "Please ensure the model is trained and saved correctly."
-    )
+    env = mock_env()
+    initial_state = env.reset()
+    assert initial_state.shape == (64, 64, 64, 3)  # 3D observation space
+    action = env.action_space.sample()
+    next_state, reward, done, _ = env.step(action)
+    assert next_state.shape == (64, 64, 64, 3)
+    assert isinstance(reward, float)
+    assert isinstance(done, bool)
 
-# Print the contents of the policy directory for debugging
-print(f"Contents of policy directory '{policy_dir}': {os.listdir(policy_dir)}")
+def test_dqn_agent():
+    state_size = (64, 64, 64, 3)
+    action_size = 6
+    agent = DQNAgent(state_size, action_size)
 
-# Print the TensorFlow version for debugging
-print(f"TensorFlow version: {tf.__version__}")
+    # Test act
+    state = np.random.rand(*state_size)
+    action = agent.act(state)
+    assert isinstance(action, np.ndarray)
+    assert action.shape == (6,)
 
-# Print the TensorFlow Probability version for debugging
-print(f"TensorFlow Probability version: {tfp.__version__}")
+    # Test remember and replay
+    next_state = np.random.rand(*state_size)
+    agent.remember(state, action, 1.0, next_state, False)
+    agent.replay(32)  # Assuming batch size of 32
 
-# Check if the 'distributions' module is accessible
-try:
-    Distribution = tfp.distributions.Distribution
-    print("TensorFlow Probability 'distributions' module is accessible.")
-except AttributeError as e:
-    print(f"Error accessing 'distributions' module: {e}")
+@patch('integrate_shapes_robots.Custom3DRobotEnv')
+@patch('integrate_shapes_robots.DQNAgent')
+def test_training_loop(mock_agent_class, mock_env_class):
+    mock_env = Mock()
+    mock_env.reset.return_value = np.random.rand(64, 64, 64, 3)
+    mock_env.step.return_value = (np.random.rand(64, 64, 64, 3), 1.0, False, {})
+    mock_env_class.return_value = mock_env
 
-try:
-    policy = py_tf_eager_policy.SavedModelPyTFEagerPolicy(
-        policy_dir,
-        time_step_spec=eval_env.time_step_spec(),
-        action_spec=eval_env.action_spec()
-    )
-    if hasattr(policy, 'action'):
-        print("The loaded policy has an 'action' method.")
-    else:
-        print("The loaded policy does NOT have an 'action' method.")
-        print(f"Available attributes of the policy object: {dir(policy)}")
-        # Print the details of the policy object for debugging
-        print(f"Policy object details: {policy}")
-        # Print the signatures of the loaded policy
-        print(f"Policy signatures: {policy.signatures}")
-        # Attempt to retrieve the concrete function for 'action'
-        if 'action' in policy.signatures:
-            print("The 'action' method is present in the policy signatures.")
-        else:
-            print("The 'action' method is NOT present in the policy "
-                  "signatures.")
-        # Additional debugging information
-        print(f"Policy type: {type(policy)}")
-        print(f"Policy object dir: {dir(policy)}")
-        print(f"Policy object repr: {repr(policy)}")
-except Exception as e:
-    print(f"Exception details: {e}")
-    raise RuntimeError(
-        f"Error loading policy from '{policy_dir}': {e}"
-    )
+    mock_agent = Mock()
+    mock_agent.act.return_value = np.random.rand(6)
+    mock_agent_class.return_value = mock_agent
 
-# Run a few episodes and print the results
-num_episodes = 10
-for _ in range(num_episodes):
-    time_step = eval_env.reset()
+    # Run a short training loop
+    num_episodes = 2
+    train_agent(num_episodes)
+
+    assert mock_env.reset.call_count == num_episodes
+    assert mock_agent.act.call_count > 0
+    assert mock_agent.remember.call_count > 0
+    assert mock_agent.replay.call_count > 0
+
+def test_agent():
+    mock_env = Mock(spec=Custom3DRobotEnv)
+    mock_env.reset.return_value = Mock(is_last=Mock(return_value=False))
+    mock_env.step.return_value = Mock(is_last=Mock(return_value=True), reward=1.0)
+
+    mock_agent = Mock()
+    mock_agent.act.return_value = np.zeros(6)  # 6D action space
+
+    time_step = mock_env.reset()
     episode_return = 0.0
 
     while not time_step.is_last():
-        action_step = policy.action(time_step)
-        time_step = eval_env.step(action_step.action)
+        action = mock_agent.act(time_step)
+        time_step = mock_env.step(action)
         episode_return += time_step.reward
 
-    print(f'Episode return: {episode_return}')
+    assert isinstance(episode_return, float)
+    assert episode_return == 1.0
 
-# New debugging statement to confirm changes
-print("Debugging statement: End of script reached.")
+    # Test visualization
+    with patch('matplotlib.pyplot.show') as mock_show:
+        mock_fig = Mock()
+        def render_side_effect():
+            plt.show()
+            return mock_fig
+        mock_env.render.side_effect = render_side_effect
+        result = mock_env.render()
+        assert mock_show.called, "plt.show() was not called during rendering"
+        assert result == mock_fig, "render method should return the figure object"
+
+if __name__ == "__main__":
+    pytest.main([__file__])

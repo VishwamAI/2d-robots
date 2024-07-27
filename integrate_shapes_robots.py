@@ -4,7 +4,6 @@ import tensorflow as tf
 from tensorflow.keras import layers
 import h5py
 from dmlab2d import Lab2d
-from walking_agents.walking_agent import DQNAgent
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
@@ -15,7 +14,7 @@ def load_3d_shapes(file_path='/home/ubuntu/3d-shapes/3dshapes.h5'):
         labels = f['labels'][:]
     return images, labels
 
-images, labels = load_3d_shapes()
+
 
 class HumanShapeGenerator:
     def __init__(self):
@@ -110,9 +109,7 @@ class Custom3DRobotEnv(gym.Env):
             ax.set_zlabel('Z')
             plt.title(f'Robot Position: {self.robot_position}, Rotation: {self.robot_rotation}')
             plt.show()
-
-# Create the custom 3D robot environment
-env = Custom3DRobotEnv()
+        return fig  # Return the figure object for testing purposes
 
 # Define the neural network model for the DQN agent
 def create_model(input_shape, action_space):
@@ -127,11 +124,6 @@ def create_model(input_shape, action_space):
     ])
     model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001), loss='mse')
     return model
-
-# Initialize the DQN agent with the custom environment
-state_size = env.observation_space.shape
-action_size = env.action_space.shape[0]
-agent = DQNAgent(state_size, action_size, create_model)
 
 def visualize_environment(env, episode_rewards, episode_lengths):
     # Visualize the 3D environment
@@ -181,66 +173,3 @@ def visualize_environment(env, episode_rewards, episode_lengths):
     plt.savefig('training_progress.png')
     plt.close()
 
-# Training loop
-episodes = 10
-batch_size = 32
-episode_rewards = []
-episode_lengths = []
-
-for e in range(episodes):
-    state = env.reset()
-    state = np.reshape(state, state_size)
-    total_reward = 0
-    steps = 0
-    for time in range(500):
-        action = agent.act(state)
-        next_state, reward, done, _ = env.step(action)
-        next_state = np.reshape(next_state, state_size)
-        agent.remember(state, action, reward, next_state, done)
-        state = next_state
-        total_reward += reward
-        steps += 1
-        if done:
-            break
-        if len(agent.memory) > batch_size:
-            agent.replay(batch_size)
-    episode_rewards.append(total_reward)
-    episode_lengths.append(steps)
-    print(f"Episode: {e}/{episodes}, Total Reward: {total_reward}, Steps: {steps}, Epsilon: {agent.epsilon:.2f}")
-
-    # Visualize every episode
-    if (e + 1) % 1 == 0:
-        visualize_environment(env, episode_rewards, episode_lengths)
-
-# Save the trained model
-model_save_path = 'trained_3d_robot_model.h5'
-agent.model.save(model_save_path)
-print(f"Model saved to {model_save_path}")
-
-# Visualize final results
-visualize_environment(env, episode_rewards, episode_lengths)
-print("Final visualization complete. Check 'environment_visualization.png' and 'training_progress.png'.")
-
-# Visualize results
-visualize_environment(env, episode_rewards, episode_lengths)
-print("Visualization complete. Check 'environment_visualization.png' and 'training_progress.png'.")
-
-# Test the trained agent
-test_episodes = 5
-for episode in range(test_episodes):
-    state = env.reset()
-    done = False
-    total_reward = 0
-    steps = 0
-    while not done:
-        state = np.reshape(state, state_size)
-        action = agent.act(state)
-        next_state, reward, done, _ = env.step(action)
-        total_reward += reward
-        steps += 1
-        state = next_state
-    print(f"Test Episode {episode + 1}: Total Reward: {total_reward}, Steps: {steps}")
-
-# Visualize the final state of the environment
-visualize_environment(env, [total_reward], [steps])
-print("Final state visualization saved.")
