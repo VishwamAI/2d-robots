@@ -173,3 +173,41 @@ def visualize_environment(env, episode_rewards, episode_lengths):
     plt.savefig('training_progress.png')
     plt.close()
 
+from walking_agents.walking_agent import DQNAgent
+
+def train_agent(num_episodes):
+    env = Custom3DRobotEnv()
+    state_size = env.observation_space.shape
+    action_size = env.action_space.shape[0]
+    agent = DQNAgent(state_size, action_size)
+
+    episode_rewards = []
+    episode_lengths = []
+
+    for episode in range(num_episodes):
+        state = env.reset()
+        total_reward = 0
+        steps = 0
+        done = False
+
+        while not done:
+            action = agent.act(state)
+            next_state, reward, done, _ = env.step(action)
+            agent.remember(state, action, reward, next_state, done)
+            state = next_state
+            total_reward += reward
+            steps += 1
+
+            if len(agent.memory) > agent.batch_size:
+                agent.replay(agent.batch_size)
+
+        episode_rewards.append(total_reward)
+        episode_lengths.append(steps)
+
+        print(f"Episode {episode + 1}/{num_episodes}, Reward: {total_reward}, Steps: {steps}, Epsilon: {agent.epsilon:.2f}")
+
+    visualize_environment(env, episode_rewards, episode_lengths)
+    save_model(agent.model, f"dqn_agent_episodes_{num_episodes}")
+
+def save_model(model, name):
+    model.save(f"models/{name}.h5")
