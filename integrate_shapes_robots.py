@@ -11,7 +11,9 @@ def lazy_import(module_name, class_name=None):
     return getattr(module, class_name) if class_name else module
 
 # Load the 3D shapes dataset
-def load_3d_shapes(file_path: str = '/home/ubuntu/3d-shapes/3dshapes.h5') -> Tuple[np.ndarray, np.ndarray]:
+def load_3d_shapes(
+    file_path: str = '/home/ubuntu/3d-shapes/3dshapes.h5'
+) -> Tuple[np.ndarray, np.ndarray]:
     try:
         with h5py.File(file_path, 'r') as f:
             images = f['images'][:]
@@ -19,13 +21,15 @@ def load_3d_shapes(file_path: str = '/home/ubuntu/3d-shapes/3dshapes.h5') -> Tup
         return images, labels
     except FileNotFoundError:
         print(f"Warning: 3D shapes file not found at {file_path}. Using dummy data.")
-        return np.zeros((100, 64, 64, 64, 3), dtype=np.uint8), np.zeros((100, 6))
+        return (np.zeros((100, 64, 64, 64, 3), dtype=np.uint8),
+                np.zeros((100, 6)))
 
 
 
 class HumanShapeGenerator:
     def __init__(self):
         self.shape_size = (10, 5, 2)  # Height, width, depth
+
 
     def generate(self):
         human_shape = np.zeros((*self.shape_size, 3), dtype=np.uint8)
@@ -41,6 +45,8 @@ class HumanShapeGenerator:
         human_shape[0:4, 3:4, :] = [0, 255, 0]  # Green
         return human_shape
 
+
+
 # Create a custom environment using dmlab2d and the 3D shapes
 class Custom3DRobotEnv(gym.Env):
     def __init__(self):
@@ -48,24 +54,31 @@ class Custom3DRobotEnv(gym.Env):
         self.lab2d = Lab2d()  # Updated to use Lab2d class directly
         self.current_shape_index = 0
         self.human_generator = HumanShapeGenerator()
-        self.action_space = gym.spaces.Box(low=-1, high=1, shape=(6,), dtype=np.float32)  # 3D movement + rotation
-        self.observation_space = gym.spaces.Box(low=0, high=255, shape=(64, 64, 64, 3), dtype=np.uint8)  # 3D observation space
+        self.action_space = gym.spaces.Box(
+            low=-1, high=1, shape=(6,), dtype=np.float32
+        )  # 3D movement + rotation
+        self.observation_space = gym.spaces.Box(
+            low=0, high=255, shape=(64, 64, 64, 3), dtype=np.uint8
+        )  # 3D observation space
         self.robot_position = np.zeros(3)
         self.robot_rotation = np.zeros(3)
-        self.human_position = np.random.randint(0, 54, size=3)  # Random initial position for human
+        self.human_position = np.random.randint(0, 54, size=3)  # Random initial position
         self.images = None
         self._load_shapes()
+
 
     def _load_shapes(self):
         if self.images is None:
             self.images, _ = load_3d_shapes()
 
+
     def reset(self):
         self.state = self.images[np.random.randint(0, len(self.images))]
         self.robot_position = np.zeros(3)
         self.robot_rotation = np.zeros(3)
-        self.human_position = np.random.randint(0, 54, size=3)  # Random initial position for human
+        self.human_position = np.random.randint(0, 54, size=3)  # Random initial position
         return self._get_observation()
+
 
     def step(self, action):
         # Implement deep walking mechanism
@@ -86,6 +99,7 @@ class Custom3DRobotEnv(gym.Env):
             reward = -5
 
         return self._get_observation(), reward, done, {}
+
 
     def _get_observation(self):
         # Get a random 3D shape from the loaded dataset
@@ -180,10 +194,6 @@ def visualize_environment(env, episode_rewards, episode_lengths):
     plt.close()
 
 def train_agent(num_episodes):
-    tf = lazy_import('tensorflow')
-    plt = lazy_import('matplotlib.pyplot')
-    Axes3D = lazy_import('mpl_toolkits.mplot3d', 'Axes3D')
-
     env = Custom3DRobotEnv()
     state_size = env.observation_space.shape
     action_size = env.action_space.shape[0]
@@ -212,17 +222,22 @@ def train_agent(num_episodes):
         episode_rewards.append(total_reward)
         episode_lengths.append(steps)
 
-        print(f"Episode {episode + 1}/{num_episodes}, Reward: {total_reward}, Steps: {steps}, Epsilon: {agent.epsilon:.2f}")
+        print(f"Episode {episode + 1}/{num_episodes}, "
+              f"Reward: {total_reward}, Steps: {steps}, "
+              f"Epsilon: {agent.epsilon:.2f}")
 
     visualize_environment(env, episode_rewards, episode_lengths)
     save_model(agent.model, f"dqn_agent_episodes_{num_episodes}")
 
+
 def save_model(model, name):
     model.save(f"models/{name}.h5")
+
 
 def main():
     num_episodes = 1000  # Or any other desired number of episodes
     train_agent(num_episodes)
+
 
 if __name__ == "__main__":
     main()

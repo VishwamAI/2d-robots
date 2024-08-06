@@ -1,16 +1,18 @@
-import pytest
-import random
-from unittest.mock import Mock, patch
-import numpy as np
-import matplotlib.pyplot as plt
-
-# Append the project root directory to the Python path
 import os
 import sys
+import pytest
+import numpy as np
+import matplotlib.pyplot as plt
+from unittest.mock import Mock, patch
+
+# Append the project root directory to the Python path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from integrate_shapes_robots import HumanShapeGenerator, Custom3DRobotEnv, train_agent, save_model
+from integrate_shapes_robots import (
+    HumanShapeGenerator, Custom3DRobotEnv, train_agent, save_model
+)
 from walking_agents.walking_agent import DQNAgent
+
 
 def test_human_shape_generator():
     generator = HumanShapeGenerator()
@@ -18,10 +20,13 @@ def test_human_shape_generator():
     assert shape.shape == (10, 5, 2, 3)  # 3D shape with color channels
     assert np.any(shape > 0)  # Ensure the shape is not empty
 
+
 @patch('integrate_shapes_robots.Custom3DRobotEnv')
 def test_custom_3d_robot_env(mock_env):
     mock_env.return_value.reset.return_value = np.zeros((64, 64, 64, 3))
-    mock_env.return_value.step.return_value = (np.zeros((64, 64, 64, 3)), 1.0, False, {})
+    mock_env.return_value.step.return_value = (
+        np.zeros((64, 64, 64, 3)), 1.0, False, {}
+    )
     mock_env.return_value.action_space.sample.return_value = np.zeros(6)
 
     env = mock_env()
@@ -32,6 +37,7 @@ def test_custom_3d_robot_env(mock_env):
     assert next_state.shape == (64, 64, 64, 3)
     assert isinstance(reward, float)
     assert isinstance(done, bool)
+
 
 def test_dqn_agent():
     state_size = (64, 64, 64, 3)
@@ -54,6 +60,7 @@ def test_dqn_agent():
     initial_epsilon = agent.epsilon
     agent.replay(32)
     assert agent.epsilon < initial_epsilon, "Epsilon should decay after replay"
+
 
 @patch('integrate_shapes_robots.Custom3DRobotEnv')
 @patch('integrate_shapes_robots.DQNAgent')
@@ -82,6 +89,7 @@ def test_training_loop(mock_save_model, mock_agent_class, mock_env_class):
     assert mock_agent.remember.call_count > 0
     assert mock_agent.replay.call_count > 0
     mock_save_model.assert_called_once()
+
 
 def test_agent():
     mock_env = Mock(spec=Custom3DRobotEnv)
@@ -114,7 +122,6 @@ def test_agent():
         assert result == mock_fig, "render method should return the figure object"
 
 
-
 @patch('integrate_shapes_robots.lazy_import')
 @patch('integrate_shapes_robots.os.path.join')
 @patch('integrate_shapes_robots.tf.keras.models.save_model')
@@ -127,6 +134,7 @@ def test_save_model(mock_lazy_import, mock_path_join, mock_save_model):
 
     mock_path_join.assert_called_once_with('models', 'test_model.h5')
     mock_save_model.assert_called_once_with(mock_model, '/fake/path/model.h5')
+
 
 if __name__ == "__main__":
     pytest.main([__file__])

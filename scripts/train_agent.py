@@ -158,8 +158,8 @@ try:
                 print("The 'action' signature is present in the saved model.")
             except Exception as e:
                 print(
-                    "Error verifying the 'action' signature in the saved model: "
-                    f"{e}"
+                    "Error verifying the 'action' signature in the saved "
+                    f"model: {e}"
                 )
         except Exception as e:
             print(f"Error saving policy at step {step}: {e}")
@@ -181,11 +181,9 @@ try:
             ).read()
             if "action" not in saved_model_cli_output:
                 raise RuntimeError(
-                    (
-                        "The 'action' signature is not present in the saved model at "
-                        f"{policy_dir}. Please ensure that the model is saved "
-                        "correctly."
-                    )
+                    "The 'action' signature is not present in the saved model "
+                    f"at {policy_dir}. Please ensure that the model is saved "
+                    "correctly."
                 )
             print("The 'action' signature is present in the saved model.")
         except Exception as e:
@@ -201,15 +199,11 @@ try:
                 print("The loaded policy has an 'action' method.")
             else:
                 print("The loaded policy does NOT have an 'action' method.")
-                print(
-                    "Available attributes of the loaded policy object: "
-                    f"{dir(loaded_policy)}"
-                )
+                print("Available attributes of the loaded policy object: "
+                      f"{dir(loaded_policy)}")
         except Exception as e:
-            print(
-                "Error loading the saved policy or calling the 'action' method: "
-                f"{e}"
-            )
+            print("Error loading the saved policy or calling the "
+                  f"'action' method: {e}")
     except Exception as e:
         print(f"Error saving policy: {e}")
 except Exception as e:
